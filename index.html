@@ -916,7 +916,11 @@ function showNoticeFinal(notice){
 }
 
 window.EZ={
-  closeNM:(){ $('#nm').style.display='none'; S.currentNotice=null; render(); },
+   closeNM: function() {
+  $('#nm').style.display = 'none';
+  S.currentNotice = null;
+  render();
+},
   closeLM:()=>{ $('#lm').style.display='none'; render(); },
   openLM:()=>{
     buildLangModal();
