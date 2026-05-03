@@ -312,6 +312,10 @@ const CFG = {
   earnCountry:{BD:.10,IN:.10,PK:.10,NG:.10,GH:.12,PH:.12,EG:.12,KE:.12},
   earnHi:.50, earnDef:.30,
   hiCC:['US','GB','CA','AU','DE','FR','NL','SE','NO','DK','CH','AT','SG','JP','NZ','IE'],
+  // RSS Feed Config (CPAGrip)
+  cpaUserId:'YOUR_CPAGRIP_USER_ID',   // ← Admin panel থেকেও বদলানো যাবে
+  cpaKey:'YOUR_CPAGRIP_API_KEY',
+  rssProxy:'https://api.allorigins.win/raw?url=',
   walls:[
     {id:'w1',icon:'🔥',color:'#ef4444',link:''},
     {id:'w2',icon:'📋',color:'#3b82f6',link:''},
@@ -334,6 +338,11 @@ const S = {
   noticeQueue:[], noticeAdDone:false, currentNotice:null,
   wallData:{}, userStats:{}, pendingWithdraw:null,
   forgotUsed:false, unsubscribes:[],
+  // RSS Feed
+  rssOffers:[], rssLoading:false, rssWallId:null,
+  // Payout settings (loaded from Firebase)
+  payoutMode:'custom',      // 'cpa' = CPA এর real amount, 'custom' = admin set amount
+  payoutRates:{BD:.10,IN:.10,PK:.10,default:.30,hi:.50},
 };
 
 // ─── LANGUAGES ────────────────────────────────────────
@@ -789,6 +798,107 @@ async function onAdCompleteForWall(wallId){
   render();
 }
 
+// ─── RSS FEED SYSTEM ──────────────────────────────────
+async function loadPayoutSettings(){
+  const snap=await fDB.ref('settings/payout').once('value');
+  const d=snap.val();
+  if(d){
+    S.payoutMode=d.mode||'custom';
+    S.payoutRates=d.rates||S.payoutRates;
+  }
+}
+
+function getUserPayout(cpaAmount){
+  // Admin যদি 'cpa' mode রাখে → CPA এর real amount দেবে
+  if(S.payoutMode==='cpa') return parseFloat(cpaAmount)||0;
+  // 'custom' mode → দেশ অনুযায়ী admin set করা amount
+  const cc=S.country||'';
+  if(S.payoutRates[cc]!=null) return S.payoutRates[cc];
+  const hiCC=CFG.hiCC||[];
+  if(hiCC.includes(cc)) return S.payoutRates.hi||0.50;
+  return S.payoutRates.default||0.30;
+}
+
+async function fetchRSSOffers(wallId){
+  S.rssLoading=true; S.rssOffers=[]; S.rssWallId=wallId;
+  // Load CPAGrip credentials from Firebase (Admin can update)
+  const snap=await fDB.ref('settings/cpa').once('value');
+  const cpa=snap.val()||{};
+  const userId=cpa.userId||CFG.cpaUserId||'';
+  const key=cpa.key||CFG.cpaKey||'';
+  const uid=S.user?.uid||'';
+  if(!userId||!key||userId==='YOUR_CPAGRIP_USER_ID'){
+    S.rssLoading=false;
+    S.rssOffers=[{error:true,msg:'CPAGrip credentials not set. Go to Admin → Settings.'}];
+    return;
+  }
+  const cc=S.country||'';
+  const rssUrl=`https://www.cpagrip.com/common/offer_feed_rss.php?user_id=${userId}&key=${key}&country=${cc}&tracking_id=${uid}`;
+  const proxyUrl=CFG.rssProxy+encodeURIComponent(rssUrl);
+  try{
+    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(8000)});
+    const txt=await res.text();
+    const parser=new DOMParser();
+    const xml=parser.parseFromString(txt,'text/xml');
+    const items=[...xml.querySelectorAll('item')];
+    if(!items.length){
+      S.rssOffers=[{empty:true}]; S.rssLoading=false; return;
+    }
+    S.rssOffers=items.slice(0,30).map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:it.querySelector('description')?.textContent||'',
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||it.querySelector('price')?.textContent||'0'),
+      category:it.querySelector('category')?.textContent||'',
+      country:it.querySelector('country')?.textContent||cc,
+      img:it.querySelector('image_url')?.textContent||'',
+    }));
+  }catch(e){
+    S.rssOffers=[{error:true,msg:'Failed to load offers. Check your CPAGrip credentials.'}];
+  }
+  S.rssLoading=false;
+}
+
+// Postback listener — CPA network এ offer complete হলে এখানে আসে
+async function processPostbacks(){
+  if(!S.user) return;
+  const uid=S.user.uid;
+  try{
+    const snap=await fDB.ref(`postbacks/${uid}`).once('value');
+    const data=snap.val()||{};
+    for(const [key,val] of Object.entries(data)){
+      if(val && !val.processed && val.amount){
+        const cpaAmt=parseFloat(val.amount)||0;
+        const userAmt=getUserPayout(cpaAmt); // Admin set amount দেবে
+        const wallId=val.wallId||'w1';
+        const offerId=val.offer_id||key;
+        // Check duplicate
+        const dupSnap=await fDB.ref(`offers/${uid}/${encKey(offerId)}`).once('value');
+        if(dupSnap.exists()){ await fDB.ref(`postbacks/${uid}/${key}/processed`).set(true); continue; }
+        // Save offer
+        await fDB.ref(`offers/${uid}/${encKey(offerId)}`).set({
+          id:offerId, wallId, cpaAmount:cpaAmt,
+          userAmount:userAmt, completedAt:Date.now(), verified:true,
+        });
+        // Add user earning
+        await fDB.ref(`users/${uid}/usdEarned`).transaction(v=>(v||0)+userAmt);
+        await fDB.ref(`users/${uid}/offersCompleted`).transaction(v=>(v||0)+1);
+        // Today's earning
+        const today=new Date().toDateString();
+        const todaySnap=await fDB.ref(`users/${uid}/todayDate`).once('value');
+        if(todaySnap.val()!==today){
+          await fDB.ref(`users/${uid}/todayDate`).set(today);
+          await fDB.ref(`users/${uid}/todayEarned`).set(userAmt);
+        } else {
+          await fDB.ref(`users/${uid}/todayEarned`).transaction(v=>(v||0)+userAmt);
+        }
+        await fDB.ref(`postbacks/${uid}/${key}/processed`).set(true);
+        toast(`✅ Offer completed! +$${userAmt.toFixed(2)}`,'s');
+      }
+    }
+  }catch(e){ console.log('Postback check error:',e); }
+}
+
 // ─── NOTICE AD GATE ───────────────────────────────────
 function viewNotice(notice){
   S.currentNotice=notice;
@@ -806,11 +916,7 @@ function showNoticeFinal(notice){
 }
 
 window.EZ={
-  closeNM: function() {
-  $('#nm').style.display = 'none';
-  S.currentNotice = null;
-  render();
-},
+  closeNM:(){ $('#nm').style.display='none'; S.currentNotice=null; render(); },
   closeLM:()=>{ $('#lm').style.display='none'; render(); },
   openLM:()=>{
     buildLangModal();
@@ -1443,29 +1549,111 @@ function buildWallView(wallId){
   const uid=S.user?.uid||'';
   const postback=getPostbackNote(uid,wallId);
   const link=w.link||'';
+  const useRSS=w.useRSS===true; // Admin RSS toggle করতে পারবে
   return `<div class="ph">
     <button class="btn bh bau bsm mb12" data-page="offers">← ${T('back')}</button>
     <div class="pt">${w.icon||'🎯'} ${w.name||wallId}</div>
-    <div class="ps">${T('ulk')} ✅</div>
+    <div class="ps">${T('ulk')} ✅ · ${S.country||''} · $${getUserPayout(0).toFixed(2)}/offer</div>
   </div>
-  ${link?`<div class="card mb12">
-    <button class="btn bp mb8" onclick="window.open('${link}','_blank')">${T('ofl')} ↗</button>
-    <div style="font-size:12px;color:#475569;text-align:center">${T('warnIframe')}</div>
-  </div>
-  <div style="border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-bottom:14px">
-    <div style="background:#111a2e;padding:8px 12px;font-size:11px;color:#475569;display:flex;align-items:center;gap:6px">
-      <div style="display:flex;gap:4px"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div><div style="width:8px;height:8px;border-radius:50%;background:#f59e0b"></div><div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div></div>
-      ${w.name||wallId}
+
+  ${(()=>{
+    // Script tag mode — inject script with uid replaced
+    const embedMode=w.embedMode||'iframe';
+    if(embedMode==='script' && w.scriptCode){
+      const injected=w.scriptCode.replace(/\{uid\}/g, uid);
+      return `<div class="card mb12">
+        <div class="card-hd">📜 Script Tag Active</div>
+        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:9px;padding:10px 13px;font-size:12px;color:#15803d;margin-bottom:12px">
+          ✅ Script is running with your User ID embedded automatically.
+        </div>
+        <div id="scriptInjectZone"></div>
+      </div>`;
+    }
+    return '';
+  })()}
+
+  ${useRSS?`
+  <!-- RSS FEED OFFERS -->
+  <div class="card mb12">
+    <div class="card-hd" style="justify-content:space-between">
+      <span>📋 Available Offers</span>
+      <button class="btn bp bau bsm" id="rssRefresh">🔄 Refresh</button>
     </div>
-    <iframe src="${link}" style="width:100%;height:500px;display:block;border:none" scrolling="yes" loading="lazy"></iframe>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 13px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
+      💰 You earn <strong>$${getUserPayout(0).toFixed(2)}</strong> per completed offer
+    </div>
+    <div id="rssContainer">
+      <div class="empty"><div style="animation:spin 1s linear infinite;display:inline-block;font-size:28px">⏳</div><div class="etx mt8">Loading offers…</div></div>
+    </div>
+  </div>`:`
+  <!-- IFRAME / LINK MODE -->
+  ${link?`
+  <div class="card mb12">
+    <button class="btn bp mb8" onclick="window.open('${link}','_blank')">${T('ofl')} ↗</button>
+    <div style="font-size:12px;color:#64748b;text-align:center;margin-top:4px">${T('warnIframe')}</div>
+  </div>
+  <div style="border:1.5px solid #dbeafe;border-radius:14px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 12px rgba(37,99,235,.07)">
+    <div style="background:#eff6ff;padding:9px 13px;font-size:11px;color:#3b82f6;display:flex;align-items:center;gap:7px;border-bottom:1px solid #dbeafe">
+      <div style="display:flex;gap:4px"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div><div style="width:8px;height:8px;border-radius:50%;background:#f59e0b"></div><div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div></div>
+      <span style="font-weight:600">${w.name||wallId}</span>
+    </div>
+    <iframe src="${link}" style="width:100%;height:520px;display:block;border:none" scrolling="yes" loading="lazy"></iframe>
   </div>`:`<div class="card mb12"><div class="empty"><div class="ein">🔗</div><div class="etx">${T('nln')}</div></div></div>`}
-  ${S.userData?.isAdmin?`<div class="card" style="border-color:#fde68a;background:#fffbeb">
+  `}
+
+  ${S.userData?.isAdmin?`
+  <div class="card" style="border:1.5px solid #fcd34d;background:#fffbeb">
     <div class="card-hd">🔐 ${T('pb')} <span class="bdg bdy">Admin Only</span></div>
-    <div style="font-size:12px;color:#92400e;margin-bottom:8px">${T('pbi')}</div>
-    <div class="cbox" style="background:#fef9c3;border-color:#fcd34d;color:#78350f">${postback}</div>
+    <div style="font-size:12px;color:#92400e;margin-bottom:9px">${T('pbi')}</div>
+    <div class="cbox" style="background:#fef9c3;border-color:#fcd34d;color:#78350f;font-size:11px">${postback}</div>
     <button class="btn bo bsm" onclick="copyText('${getPostbackUrl(uid,wallId)}')">📋 Copy Postback URL</button>
   </div>`:''}
-`;
+`;}
+
+// RSS Container render
+function renderRSSOffers(wallId){
+  const c=$('#rssContainer'); if(!c) return;
+  const offers=S.rssOffers;
+  if(!offers.length||S.rssLoading){
+    c.innerHTML=`<div class="empty"><div style="animation:spin 1s linear infinite;display:inline-block;font-size:28px">⏳</div><div class="etx mt8">Loading offers…</div></div>`;
+    return;
+  }
+  if(offers[0]?.error){
+    c.innerHTML=`<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:13px;font-size:13px;color:#dc2626">⚠️ ${offers[0].msg}</div>`;
+    return;
+  }
+  if(offers[0]?.empty){
+    c.innerHTML=`<div class="empty"><div class="ein">📭</div><div class="etx">No offers available for your country right now.</div></div>`;
+    return;
+  }
+  c.innerHTML=offers.map((o,i)=>`
+  <div style="background:#fff;border:1.5px solid #dbeafe;border-radius:13px;padding:13px;margin-bottom:9px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;transition:all .18s" 
+    onmouseover="this.style.borderColor='#93c5fd';this.style.transform='translateY(-1px)'"
+    onmouseout="this.style.borderColor='#dbeafe';this.style.transform='translateY(0)'"
+    onclick="openRSSOffer('${encodeURIComponent(o.link)}','${wallId}')">
+    <div style="width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:1px solid #dbeafe;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+      ${o.img?`<img src="${o.img}" style="width:36px;height:36px;border-radius:8px;object-fit:cover" onerror="this.parentNode.textContent='🎯'">`:'🎯'}
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;font-size:13px;color:#0f172a;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.title}</div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${o.desc.replace(/<[^>]*>/g,'')}</div>
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+        <span style="font-weight:700;font-size:13px;color:#059669">+$${getUserPayout(o.payout).toFixed(2)}</span>
+        ${o.payout>0?`<span style="font-size:10px;color:#94a3b8">CPA: $${o.payout.toFixed(2)}</span>`:''}
+        ${o.category?`<span style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:5px;padding:1px 7px;font-size:10px;font-weight:600">${o.category}</span>`:''}
+      </div>
+    </div>
+    <div style="font-size:18px;color:#2563eb;flex-shrink:0">›</div>
+  </div>`).join('');
+}
+
+function openRSSOffer(encodedLink, wallId){
+  const link=decodeURIComponent(encodedLink);
+  if(!link) return;
+  window.open(link,'_blank','noopener');
+  // After opening show a note
+  toast('Complete the offer then come back here!','i',4000);
+}
 }
 
 // ─── PROFILE PAGE ─────────────────────────────────────
@@ -1549,8 +1737,8 @@ async function loadNotices(){
 
 // ─── ADMIN PAGE ───────────────────────────────────────
 function buildAdmin(){
-  const tabs=['users','ws','ns','wls','ofs'];
-  const tabLabels={users:T('us'),ws:T('ws'),ns:T('ns'),wls:T('wls'),ofs:T('ofs')};
+  const tabs=['users','ws','ns','wls','ofs','sett'];
+  const tabLabels={users:T('us'),ws:T('ws'),ns:T('ns'),wls:T('wls'),ofs:T('ofs'),sett:'⚙️ Settings'};
   return `<div class="ph"><div class="pt">⚙️ ${T('ap')}</div></div>
   <div class="ats">${tabs.map(t=>`<button class="at-btn${S.adminTab===t?' on':''}" data-atab="${t}">${tabLabels[t]||t}</button>`).join('')}</div>
   <div id="adminContent"><div class="empty"><div class="ein">⏳</div></div></div>`;
@@ -1563,6 +1751,7 @@ async function loadAdminContent(){
   else if(S.adminTab==='ns') loadAdminNotices(c);
   else if(S.adminTab==='wls') loadAdminWalls(c);
   else if(S.adminTab==='ofs') await loadAdminOffers(c);
+  else if(S.adminTab==='sett') await loadAdminSettings(c);
 }
 
 async function loadAdminUsers(c){
@@ -1593,9 +1782,18 @@ async function loadAdminUsers(c){
       toast('Done ✓','s'); loadAdminContent();
     };
   });
-}
-
-async function loadAdminWithdrawals(c){
+  c.querySelectorAll('[data-rsstoggle]').forEach(btn=>{
+    btn.onclick=async()=>{
+      const id=btn.dataset.rsstoggle;
+      const cur=S.wallData[id]?.useRSS||false;
+      await fDB.ref(`walls/${id}/useRSS`).set(!cur);
+      if(S.wallData[id]) S.wallData[id].useRSS=!cur;
+      btn.classList.toggle('sel',!cur);
+      btn.textContent=!cur?'✅ RSS ON':'⬜ RSS OFF';
+      toast(!cur?'RSS Feed enabled!':'RSS Feed disabled','s');
+    };
+  });
+}(c){
   const snap=await fDB.ref('withdrawals').orderByChild('status').equalTo('pending').once('value');
   const snap2=await fDB.ref('withdrawals').orderByChild('createdAt').limitToLast(20).once('value');
   const data=snap2.val()||{};
@@ -1661,31 +1859,92 @@ async function loadAdminNoticeList(){
 
 function loadAdminWalls(c){
   c.innerHTML=`<div class="card"><div class="card-hd">🔗 ${T('ols')}</div>`+
-  CFG.walls.map((w,i)=>`<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07)">
-    <div class="dfb mb8"><div style="font-size:18px;margin-right:8px">${w.icon}</div><div class="fw6 sm">Offerwall ${i+1} (${w.id})</div></div>
-    <label class="lbl">${T('wls2')}</label>
-    <input class="inp" id="wl_nm_${w.id}" value="${S.wallData[w.id]?.name||''}" placeholder="Name">
-    <label class="lbl">${T('wld')}</label>
-    <input class="inp" id="wl_ds_${w.id}" value="${S.wallData[w.id]?.desc||''}" placeholder="Description">
-    <label class="lbl">${T('wln')}</label>
-    <input class="inp" id="wl_lk_${w.id}" value="${S.wallData[w.id]?.link||''}" placeholder="https://offerwall-link-here.com">
-    <button class="btn bp bsm" data-savew="${w.id}">💾 Save</button>
-  </div>`).join('')+`</div>`;
+  CFG.walls.map((w,i)=>{
+    const wd=S.wallData[w.id]||{};
+    const mode=wd.embedMode||'iframe';
+    return `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1.5px solid #dbeafe">
+    <div class="dfb mb8">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:20px">${w.icon}</div>
+        <div class="fw6 sm">Offerwall ${i+1} (${w.id})</div>
+      </div>
+    </div>
+    <label class="lbl">Name</label>
+    <input class="inp" id="wl_nm_${w.id}" value="${wd.name||''}" placeholder="e.g. CPX Survey">
+    <label class="lbl">Description</label>
+    <input class="inp" id="wl_ds_${w.id}" value="${wd.desc||''}" placeholder="Short description">
+    <label class="lbl">Embed Mode</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <button class="mb2${mode==='iframe'?' sel':''}" data-mode-btn="${w.id}" data-mode="iframe">🖼️ iFrame</button>
+      <button class="mb2${mode==='script'?' sel':''}" data-mode-btn="${w.id}" data-mode="script">📜 Script Tag</button>
+    </div>
+    <div id="iframe_sec_${w.id}" style="${mode==='script'?'display:none':''}">
+      <label class="lbl">iFrame URL</label>
+      <input class="inp" id="wl_lk_${w.id}" value="${wd.link||''}" placeholder="https://offers.cpx-research.com/...?app_id=32801&user_id={uid}">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:9px 12px;font-size:11px;color:#1d4ed8;margin-bottom:10px">
+        💡 URL এ <strong>{uid}</strong> লিখুন — user এর ID automatic বসে যাবে<br>Example: <code>?app_id=32801&user_id={uid}</code>
+      </div>
+    </div>
+    <div id="script_sec_${w.id}" style="${mode==='iframe'?'display:none':''}">
+      <label class="lbl">Script Tag Code</label>
+      <textarea class="inp" id="wl_sc_${w.id}" rows="5" placeholder="Paste full script code here...">${wd.scriptCode||''}</textarea>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:9px;padding:9px 12px;font-size:11px;color:#15803d;margin-bottom:10px">
+        💡 Script এ user_id এর জায়গায় <strong>{uid}</strong> লিখুন — automatic বসবে<br>Example: <code>user_id: "{uid}"</code>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+      <button class="btn bp bau bsm" data-savew="${w.id}">💾 Save</button>
+      <button class="mb2${wd.useRSS?' sel':''}" data-rsstoggle="${w.id}" style="padding:7px 13px;font-size:11px">${wd.useRSS?'✅ RSS ON':'⬜ RSS OFF'}</button>
+    </div>
+  </div>`;
+  }).join('')+`</div>`;
+
+  // Mode toggle
+  c.querySelectorAll('[data-mode-btn]').forEach(btn=>{
+    btn.onclick=()=>{
+      const id=btn.getAttribute('data-mode-btn');
+      const mode=btn.getAttribute('data-mode');
+      c.querySelectorAll(`[data-mode-btn="${id}"]`).forEach(b=>{
+        b.classList.toggle('sel', b.getAttribute('data-mode')===mode);
+      });
+      const iSec=document.getElementById(`iframe_sec_${id}`);
+      const sSec=document.getElementById(`script_sec_${id}`);
+      if(iSec) iSec.style.display=mode==='iframe'?'':'none';
+      if(sSec) sSec.style.display=mode==='script'?'':'none';
+      if(S.wallData[id]) S.wallData[id].embedMode=mode;
+    };
+  });
+
+  // Save
   c.querySelectorAll('[data-savew]').forEach(btn=>{
     btn.onclick=async()=>{
       const id=btn.dataset.savew;
-      const nm=$(`#wl_nm_${id}`)?.value.trim()||'';
-      const ds=$(`#wl_ds_${id}`)?.value.trim()||'';
-      const lk=$(`#wl_lk_${id}`)?.value.trim()||'';
-      btn.disabled=true;
-      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk});
-      // Update local cache
-      if(S.wallData[id]){ S.wallData[id].name=nm; S.wallData[id].desc=ds; S.wallData[id].link=lk; }
-      toast('Saved ✓','s'); btn.disabled=false;
+      const nm=document.getElementById(`wl_nm_${id}`)?.value.trim()||'';
+      const ds=document.getElementById(`wl_ds_${id}`)?.value.trim()||'';
+      const lk=document.getElementById(`wl_lk_${id}`)?.value.trim()||'';
+      const sc=document.getElementById(`wl_sc_${id}`)?.value.trim()||'';
+      const iSec=document.getElementById(`iframe_sec_${id}`);
+      const mode=iSec&&iSec.style.display!=='none'?'iframe':'script';
+      btn.disabled=true; btn.textContent='⏳';
+      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk,scriptCode:sc,embedMode:mode});
+      if(S.wallData[id]){S.wallData[id].name=nm;S.wallData[id].desc=ds;S.wallData[id].link=lk;S.wallData[id].scriptCode=sc;S.wallData[id].embedMode=mode;}
+      toast('Saved ✓','s'); btn.disabled=false; btn.textContent='💾 Save';
+    };
+  });
+
+  // RSS toggle
+  c.querySelectorAll('[data-rsstoggle]').forEach(btn=>{
+    btn.onclick=async()=>{
+      const id=btn.dataset.rsstoggle;
+      const cur=S.wallData[id]?.useRSS||false;
+      await fDB.ref(`walls/${id}/useRSS`).set(!cur);
+      if(S.wallData[id]) S.wallData[id].useRSS=!cur;
+      btn.classList.toggle('sel',!cur);
+      btn.textContent=!cur?'✅ RSS ON':'⬜ RSS OFF';
+      toast(!cur?'RSS enabled!':'RSS disabled','s');
     };
   });
 }
-
 async function loadAdminOffers(c){
   const snap=await fDB.ref('offers').once('value');
   const data=snap.val()||{};
@@ -1748,6 +2007,39 @@ function attachAppEvents(){
   if(hn) hn.querySelector('button').onclick=()=>{
     if(S.noticeQueue.length) viewNotice(S.noticeQueue[0]);
   };
+  // Wall view — RSS load + Script inject
+  if(S.page==='wallview'){
+    const wallId=S.unlockWallId;
+    const w=S.wallData[wallId]||{};
+    // Script Tag injection
+    if((w.embedMode||'iframe')==='script' && w.scriptCode){
+      const zone=document.getElementById('scriptInjectZone');
+      if(zone){
+        const uid=S.user?.uid||'';
+        const injected=w.scriptCode.replace(/\{uid\}/g, uid);
+        const wrapper=document.createElement('div');
+        wrapper.innerHTML=injected;
+        // Execute scripts inside
+        wrapper.querySelectorAll('script').forEach(oldScript=>{
+          const newScript=document.createElement('script');
+          if(oldScript.src) newScript.src=oldScript.src;
+          else newScript.textContent=oldScript.textContent;
+          document.body.appendChild(newScript);
+        });
+        zone.appendChild(wrapper);
+      }
+    }
+    if(w.useRSS){
+      fetchRSSOffers(wallId).then(()=>renderRSSOffers(wallId));
+    }
+    const rfBtn=document.getElementById('rssRefresh');
+    if(rfBtn) rfBtn.onclick=async()=>{
+      rfBtn.disabled=true; rfBtn.textContent='⏳ Loading…';
+      await fetchRSSOffers(wallId);
+      renderRSSOffers(wallId);
+      rfBtn.disabled=false; rfBtn.textContent='🔄 Refresh';
+    };
+  }
   // Wallet
   if(S.page==='wallet'){
     let selMethod='bkash';
@@ -1852,6 +2144,10 @@ fAuth.onAuthStateChanged(async user=>{
     detectCountry();
     // Load walls
     await getWallData();
+    // Load payout settings
+    await loadPayoutSettings();
+    // Process any pending postbacks
+    processPostbacks();
     // Setup realtime listeners
     setupListeners(user.uid);
     // Go to home
@@ -1898,8 +2194,138 @@ window.addEventListener('popstate',()=>{
   }
 })().catch(()=>{});
 
-console.log('%c◆ EarnZone Pro — Loaded', 'color:#a78bfa;font-size:14px;font-weight:700');
-console.log('%cFirebase: earnzip-a8766', 'color:#64748b');
+async function loadAdminSettings(c){
+  // Load current settings
+  const snap=await fDB.ref('settings').once('value');
+  const cfg=snap.val()||{};
+  const cpa=cfg.cpa||{};
+  const payout=cfg.payout||{};
+  const rates=payout.rates||{BD:.10,IN:.10,PK:.10,default:.30,hi:.50};
+  const mode=payout.mode||'custom';
+
+  c.innerHTML=`
+  <!-- CPAGrip Credentials -->
+  <div class="card mb12">
+    <div class="card-hd">🔑 CPAGrip Credentials</div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 13px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
+      ℹ️ CPAGrip dashboard → Tools → Publisher API → এখানে পাবেন
+    </div>
+    <label class="lbl">CPAGrip User ID</label>
+    <input class="inp" id="cpaUid" value="${cpa.userId||''}" placeholder="e.g. 123456">
+    <label class="lbl">CPAGrip API Key</label>
+    <input class="inp" id="cpaKey" value="${cpa.key||''}" placeholder="32-character key">
+    <button class="btn bp" id="saveCPA">💾 Save CPAGrip Credentials</button>
+  </div>
+
+  <!-- Payout Mode -->
+  <div class="card mb12">
+    <div class="card-hd">💰 Payout Mode</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">
+      <button class="mb2${mode==='custom'?' sel':''}" id="modeCustom">
+        ✏️ Custom (আপনি যা সেট করবেন)
+      </button>
+      <button class="mb2${mode==='cpa'?' sel':''}" id="modeCPA">
+        📡 CPA Real Amount
+      </button>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:9px;padding:10px 13px;font-size:12px;color:#15803d;margin-bottom:12px" id="modeNote">
+      ${mode==='custom'?'✅ Custom mode: User দেশ অনুযায়ী নিচের rate পাবে':'✅ CPA mode: CPA network যা পাঠাবে user তাই পাবে'}
+    </div>
+    <button class="btn bg" id="saveMode">💾 Save Payout Mode</button>
+  </div>
+
+  <!-- Custom Payout Rates -->
+  <div class="card mb12" id="ratesCard" style="${mode==='cpa'?'opacity:.6;pointer-events:none':''}">
+    <div class="card-hd">🌍 Country Payout Rates (USD per offer)</div>
+    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:9px;padding:10px 13px;font-size:12px;color:#b45309;margin-bottom:12px">
+      ⚠️ এই rate গুলো "Custom" mode এ কাজ করে। CPA থেকে যা আসুক আপনার set rate যাবে user এ।
+    </div>
+    ${['BD','IN','PK','NG','GH','PH','EG','KE'].map(cc=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+      <div style="font-size:20px;width:30px">${{BD:'🇧🇩',IN:'🇮🇳',PK:'🇵🇰',NG:'🇳🇬',GH:'🇬🇭',PH:'🇵🇭',EG:'🇪🇬',KE:'🇰🇪'}[cc]||'🌍'}</div>
+      <div style="font-weight:600;font-size:13px;width:40px">${cc}</div>
+      <div style="position:relative;flex:1">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#64748b;font-weight:700">$</span>
+        <input class="inp rate-inp" data-cc="${cc}" value="${(rates[cc]||0.10).toFixed(2)}" type="number" step="0.01" min="0.01" style="padding-left:28px;margin-bottom:0">
+      </div>
+    </div>`).join('')}
+    <div style="border-top:1px solid #dbeafe;margin:12px 0"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+      <div style="font-size:20px;width:30px">🌍</div>
+      <div style="font-weight:600;font-size:13px;width:40px">Other</div>
+      <div style="position:relative;flex:1">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#64748b;font-weight:700">$</span>
+        <input class="inp rate-inp" data-cc="default" value="${(rates.default||0.30).toFixed(2)}" type="number" step="0.01" min="0.01" style="padding-left:28px;margin-bottom:0">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="font-size:20px;width:30px">🏆</div>
+      <div style="font-weight:600;font-size:13px;width:40px">US/UK/AU</div>
+      <div style="position:relative;flex:1">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#64748b;font-weight:700">$</span>
+        <input class="inp rate-inp" data-cc="hi" value="${(rates.hi||0.50).toFixed(2)}" type="number" step="0.01" min="0.01" style="padding-left:28px;margin-bottom:0">
+      </div>
+    </div>
+    <button class="btn bg" id="saveRates">💾 Save Payout Rates</button>
+  </div>
+
+  <!-- Test Postback -->
+  <div class="card">
+    <div class="card-hd">🧪 Test Postback</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:10px">User UID দিয়ে manually offer complete করুন (test এর জন্য)</div>
+    <input class="inp" id="testUid" placeholder="User UID">
+    <select class="inp" id="testWall">${CFG.walls.map(w=>`<option value="${w.id}">${S.wallData[w.id]?.name||w.id}</option>`).join('')}</select>
+    <input class="inp" id="testAmt" type="number" step="0.01" placeholder="Amount (e.g. 0.30)">
+    <button class="btn bo" id="testPbBtn">🧪 Simulate Offer Complete</button>
+  </div>`;
+
+  // Mode toggle
+  let selMode=mode;
+  $('#modeCustom').onclick=()=>{
+    selMode='custom';
+    $('#modeCustom').classList.add('sel'); $('#modeCPA').classList.remove('sel');
+    $('#modeNote').textContent='✅ Custom mode: User দেশ অনুযায়ী নিচের rate পাবে';
+    $('#ratesCard').style.opacity='1'; $('#ratesCard').style.pointerEvents='auto';
+  };
+  $('#modeCPA').onclick=()=>{
+    selMode='cpa';
+    $('#modeCPA').classList.add('sel'); $('#modeCustom').classList.remove('sel');
+    $('#modeNote').textContent='✅ CPA mode: CPA network যা পাঠাবে user তাই পাবে';
+    $('#ratesCard').style.opacity='.6'; $('#ratesCard').style.pointerEvents='none';
+  };
+  $('#saveMode').onclick=async()=>{
+    await fDB.ref('settings/payout/mode').set(selMode);
+    S.payoutMode=selMode;
+    toast('Payout mode saved!','s');
+  };
+  // Save CPA
+  $('#saveCPA').onclick=async()=>{
+    const uid=$('#cpaUid').value.trim(), key=$('#cpaKey').value.trim();
+    if(!uid||!key){ toast('Fill both fields','e'); return; }
+    await fDB.ref('settings/cpa').set({userId:uid,key});
+    toast('CPAGrip credentials saved!','s');
+  };
+  // Save rates
+  $('#saveRates').onclick=async()=>{
+    const r={};
+    $$('.rate-inp').forEach(inp=>{ r[inp.dataset.cc]=parseFloat(inp.value)||0.10; });
+    await fDB.ref('settings/payout/rates').set(r);
+    S.payoutRates=r;
+    toast('Payout rates saved!','s');
+  };
+  // Test postback
+  $('#testPbBtn').onclick=async()=>{
+    const uid=$('#testUid').value.trim();
+    const wall=$('#testWall').value;
+    const amt=parseFloat($('#testAmt').value)||0;
+    if(!uid){ toast('Enter user UID','e'); return; }
+    const key=`test_${Date.now()}`;
+    await fDB.ref(`postbacks/${uid}/${key}`).set({amount:amt||S.payoutRates.default||0.30,wallId:wall,offer_id:key,processed:false});
+    toast('Test postback sent! User balance will update.','s');
+  };
+}
+
+console.log('%c◆ EarnZone Pro v3 — RSS + Custom Payout + Postback', 'color:#2563eb;font-size:14px;font-weight:700');
 </script>
 
 <!-- Adsterra Banner Ad (place in site footer or sidebar) -->
