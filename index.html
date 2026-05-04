@@ -819,42 +819,125 @@ function getUserPayout(cpaAmount){
   return S.payoutRates.default||0.30;
 }
 
+// ── 6-PLATFORM RSS SYSTEM ────────────────────────────
+const RSS_PLATFORMS={
+  cpagrip:{
+    name:'CPAGrip', color:'#ef4444', icon:'🔥',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://www.cpagrip.com/common/offer_feed_rss.php?user_id=${creds.userId}&key=${creds.key}&country=${cc}&tracking_id=${uid}`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:it.querySelector('category')?.textContent||'CPA',
+      img:it.querySelector('image_url')?.textContent||'',
+    })),
+  },
+  ogads:{
+    name:'OGAds', color:'#8b5cf6', icon:'📱',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://ogads.com/wall/api?pub_id=${creds.userId}&key=${creds.key}&country=${cc}&subid=${uid}&format=rss`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:'Mobile',
+      img:'',
+    })),
+  },
+  adgate:{
+    name:'AdGate Media', color:'#3b82f6', icon:'🎯',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://wall.adgaterewards.com/api/v1/offers?key=${creds.key}&user_id=${uid}&country=${cc}&format=rss`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:'AdGate',
+      img:it.querySelector('enclosure')?.getAttribute('url')||'',
+    })),
+  },
+  adscend:{
+    name:'Adscend Media', color:'#10b981', icon:'💚',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://adscendmedia.com/api/v1/wall?pub_id=${creds.userId}&api_key=${creds.key}&country=${cc}&user_id=${uid}&format=rss`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:'Adscend',
+      img:'',
+    })),
+  },
+  mylead:{
+    name:'MyLead', color:'#f59e0b', icon:'⭐',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://mylead.global/api/offers?token=${creds.key}&country=${cc}&user=${uid}&format=rss`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:'MyLead',
+      img:'',
+    })),
+  },
+  adworkm:{
+    name:'AdWork Media', color:'#ec4899', icon:'👑',
+    needsKey:true,
+    buildUrl:(creds,cc,uid)=>`https://www.adworkmedia.com/api/offers?pub_id=${creds.userId}&api_key=${creds.key}&country=${cc}&subid=${uid}&format=rss`,
+    parse:(xml,cc)=>[...xml.querySelectorAll('item')].map(it=>({
+      title:it.querySelector('title')?.textContent||'Offer',
+      desc:(it.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,''),
+      link:it.querySelector('link')?.textContent||'',
+      payout:parseFloat(it.querySelector('payout')?.textContent||'0'),
+      category:'Premium',
+      img:'',
+    })),
+  },
+};
+
 async function fetchRSSOffers(wallId){
   S.rssLoading=true; S.rssOffers=[]; S.rssWallId=wallId;
-  // Load CPAGrip credentials from Firebase (Admin can update)
-  const snap=await fDB.ref('settings/cpa').once('value');
-  const cpa=snap.val()||{};
-  const userId=cpa.userId||CFG.cpaUserId||'';
-  const key=cpa.key||CFG.cpaKey||'';
   const uid=S.user?.uid||'';
-  if(!userId||!key||userId==='YOUR_CPAGRIP_USER_ID'){
+  const cc=S.country||'';
+  // Get wall's platform setting
+  const wallSnap=await fDB.ref(`walls/${wallId}`).once('value');
+  const wallCfg=wallSnap.val()||{};
+  const platformId=wallCfg.rssPlatform||'cpagrip';
+  const platform=RSS_PLATFORMS[platformId];
+  if(!platform){
     S.rssLoading=false;
-    S.rssOffers=[{error:true,msg:'CPAGrip credentials not set. Go to Admin → Settings.'}];
+    S.rssOffers=[{error:true,msg:'Unknown platform. Set in Admin → Wall Links.'}];
     return;
   }
-  const cc=S.country||'';
-  const rssUrl=`https://www.cpagrip.com/common/offer_feed_rss.php?user_id=${userId}&key=${key}&country=${cc}&tracking_id=${uid}`;
+  // Load credentials from Firebase
+  const credSnap=await fDB.ref(`settings/rss/${platformId}`).once('value');
+  const creds=credSnap.val()||{};
+  if(!creds.userId && !creds.key){
+    S.rssLoading=false;
+    S.rssOffers=[{error:true,msg:`${platform.name} credentials not set. Go to Admin → Settings → RSS Credentials.`}];
+    return;
+  }
+  const rssUrl=platform.buildUrl(creds,cc,uid);
   const proxyUrl=CFG.rssProxy+encodeURIComponent(rssUrl);
   try{
-    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(8000)});
+    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(9000)});
     const txt=await res.text();
     const parser=new DOMParser();
     const xml=parser.parseFromString(txt,'text/xml');
-    const items=[...xml.querySelectorAll('item')];
-    if(!items.length){
-      S.rssOffers=[{empty:true}]; S.rssLoading=false; return;
+    const parsed=platform.parse(xml,cc);
+    if(!parsed.length){
+      S.rssOffers=[{empty:true,platform:platform.name}];
+    } else {
+      S.rssOffers=parsed.slice(0,30);
     }
-    S.rssOffers=items.slice(0,30).map(it=>({
-      title:it.querySelector('title')?.textContent||'Offer',
-      desc:it.querySelector('description')?.textContent||'',
-      link:it.querySelector('link')?.textContent||'',
-      payout:parseFloat(it.querySelector('payout')?.textContent||it.querySelector('price')?.textContent||'0'),
-      category:it.querySelector('category')?.textContent||'',
-      country:it.querySelector('country')?.textContent||cc,
-      img:it.querySelector('image_url')?.textContent||'',
-    }));
   }catch(e){
-    S.rssOffers=[{error:true,msg:'Failed to load offers. Check your CPAGrip credentials.'}];
+    S.rssOffers=[{error:true,msg:`Failed to load ${platform.name} offers. Check credentials.`}];
   }
   S.rssLoading=false;
 }
@@ -916,11 +999,7 @@ function showNoticeFinal(notice){
 }
 
 window.EZ={
-  closeNM: function() {
-  $('#nm').style.display = 'none';
-  S.currentNotice = null;
-  render();
-},
+  closeNM:(){ $('#nm').style.display='none'; S.currentNotice=null; render(); },
   closeLM:()=>{ $('#lm').style.display='none'; render(); },
   openLM:()=>{
     buildLangModal();
@@ -1558,6 +1637,7 @@ function buildWallView(wallId){
     <button class="btn bh bau bsm mb12" data-page="offers">← ${T('back')}</button>
     <div class="pt">${w.icon||'🎯'} ${w.name||wallId}</div>
     <div class="ps">${T('ulk')} ✅ · ${S.country||''} · $${getUserPayout(0).toFixed(2)}/offer</div>
+    ${(()=>{const m=w.embedMode||'iframe';const pid=w.rssPlatform||'cpagrip';const p=RSS_PLATFORMS[pid];if(m==='rss'&&p)return`<div style="display:inline-flex;align-items:center;gap:5px;background:${p.color}15;border:1px solid ${p.color}30;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600;color:${p.color};margin-top:4px">${p.icon} ${p.name} RSS</div>`;if(m==='script')return'<div style="display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600;color:#15803d;margin-top:4px">📜 Script Mode</div>';return'';})()}
   </div>
 
   ${(()=>{
@@ -1627,7 +1707,8 @@ function renderRSSOffers(wallId){
     return;
   }
   if(offers[0]?.empty){
-    c.innerHTML=`<div class="empty"><div class="ein">📭</div><div class="etx">No offers available for your country right now.</div></div>`;
+    const pn=offers[0].platform||'Platform';
+    c.innerHTML=`<div class="empty"><div class="ein">📭</div><div class="etx">No offers from ${pn} for your country right now. Try again later.</div></div>`;
     return;
   }
   c.innerHTML=offers.map((o,i)=>`
@@ -1657,6 +1738,7 @@ function openRSSOffer(encodedLink, wallId){
   window.open(link,'_blank','noopener');
   // After opening show a note
   toast('Complete the offer then come back here!','i',4000);
+}
 }
 
 // ─── PROFILE PAGE ─────────────────────────────────────
@@ -1796,8 +1878,7 @@ async function loadAdminUsers(c){
       toast(!cur?'RSS Feed enabled!':'RSS Feed disabled','s');
     };
   });
-}
-   async function loadWithdrawals(c){
+}(c){
   const snap=await fDB.ref('withdrawals').orderByChild('status').equalTo('pending').once('value');
   const snap2=await fDB.ref('withdrawals').orderByChild('createdAt').limitToLast(20).once('value');
   const data=snap2.val()||{};
@@ -1825,7 +1906,7 @@ async function loadAdminUsers(c){
   });
 }
 
-    function loadAdminNotices(c){
+function loadAdminNotices(c){
   c.innerHTML=`<div class="card mb12">
     <div class="card-hd">📢 ${T('pn')}</div>
     <textarea class="inp" id="adnTxt" placeholder="${T('an')}" rows="3"></textarea>
@@ -1878,9 +1959,22 @@ function loadAdminWalls(c){
     <label class="lbl">Description</label>
     <input class="inp" id="wl_ds_${w.id}" value="${wd.desc||''}" placeholder="Short description">
     <label class="lbl">Embed Mode</label>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
       <button class="mb2${mode==='iframe'?' sel':''}" data-mode-btn="${w.id}" data-mode="iframe">🖼️ iFrame</button>
-      <button class="mb2${mode==='script'?' sel':''}" data-mode-btn="${w.id}" data-mode="script">📜 Script Tag</button>
+      <button class="mb2${mode==='script'?' sel':''}" data-mode-btn="${w.id}" data-mode="script">📜 Script</button>
+      <button class="mb2${mode==='rss'?' sel':''}" data-mode-btn="${w.id}" data-mode="rss">📡 RSS Feed</button>
+    </div>
+
+    <!-- RSS PLATFORM SELECTOR -->
+    <div id="rss_sec_${w.id}" style="${mode!=='rss'?'display:none':''}">
+      <label class="lbl">RSS Platform</label>
+      <select class="inp" id="wl_rp_${w.id}">
+        ${Object.entries(RSS_PLATFORMS).map(([id,p])=>`<option value="${id}" ${(wd.rssPlatform||'cpagrip')===id?'selected':''}>${p.icon} ${p.name}</option>`).join('')}
+      </select>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:9px 12px;font-size:11px;color:#1d4ed8;margin-bottom:10px">
+        📡 Credentials → Admin → Settings → RSS Credentials<br>
+        User ID automatic বসবে। শুধু platform credentials দিন।
+      </div>
     </div>
     <div id="iframe_sec_${w.id}" style="${mode==='script'?'display:none':''}">
       <label class="lbl">iFrame URL</label>
@@ -1913,8 +2007,10 @@ function loadAdminWalls(c){
       });
       const iSec=document.getElementById(`iframe_sec_${id}`);
       const sSec=document.getElementById(`script_sec_${id}`);
+      const rSec=document.getElementById(`rss_sec_${id}`);
       if(iSec) iSec.style.display=mode==='iframe'?'':'none';
       if(sSec) sSec.style.display=mode==='script'?'':'none';
+      if(rSec) rSec.style.display=mode==='rss'?'':'none';
       if(S.wallData[id]) S.wallData[id].embedMode=mode;
     };
   });
@@ -1928,10 +2024,16 @@ function loadAdminWalls(c){
       const lk=document.getElementById(`wl_lk_${id}`)?.value.trim()||'';
       const sc=document.getElementById(`wl_sc_${id}`)?.value.trim()||'';
       const iSec=document.getElementById(`iframe_sec_${id}`);
-      const mode=iSec&&iSec.style.display!=='none'?'iframe':'script';
+      const sSec=document.getElementById(`script_sec_${id}`);
+      const rSec=document.getElementById(`rss_sec_${id}`);
+      const rpEl=document.getElementById(`wl_rp_${id}`);
+      let mode='iframe';
+      if(sSec&&sSec.style.display!=='none') mode='script';
+      if(rSec&&rSec.style.display!=='none') mode='rss';
+      const rssPlatform=rpEl?.value||'cpagrip';
       btn.disabled=true; btn.textContent='⏳';
-      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk,scriptCode:sc,embedMode:mode});
-      if(S.wallData[id]){S.wallData[id].name=nm;S.wallData[id].desc=ds;S.wallData[id].link=lk;S.wallData[id].scriptCode=sc;S.wallData[id].embedMode=mode;}
+      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk,scriptCode:sc,embedMode:mode,rssPlatform});
+      if(S.wallData[id]){S.wallData[id].name=nm;S.wallData[id].desc=ds;S.wallData[id].link=lk;S.wallData[id].scriptCode=sc;S.wallData[id].embedMode=mode;S.wallData[id].rssPlatform=rssPlatform;}
       toast('Saved ✓','s'); btn.disabled=false; btn.textContent='💾 Save';
     };
   });
@@ -2015,8 +2117,9 @@ function attachAppEvents(){
   if(S.page==='wallview'){
     const wallId=S.unlockWallId;
     const w=S.wallData[wallId]||{};
+    const embedMode=w.embedMode||'iframe';
     // Script Tag injection
-    if((w.embedMode||'iframe')==='script' && w.scriptCode){
+    if(embedMode==='script' && w.scriptCode){
       const zone=document.getElementById('scriptInjectZone');
       if(zone){
         const uid=S.user?.uid||'';
@@ -2033,7 +2136,7 @@ function attachAppEvents(){
         zone.appendChild(wrapper);
       }
     }
-    if(w.useRSS){
+    if(w.useRSS || embedMode==='rss'){
       fetchRSSOffers(wallId).then(()=>renderRSSOffers(wallId));
     }
     const rfBtn=document.getElementById('rssRefresh');
@@ -2208,17 +2311,14 @@ async function loadAdminSettings(c){
   const mode=payout.mode||'custom';
 
   c.innerHTML=`
-  <!-- CPAGrip Credentials -->
+  <!-- 6-Platform RSS Credentials -->
   <div class="card mb12">
-    <div class="card-hd">🔑 CPAGrip Credentials</div>
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 13px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
-      ℹ️ CPAGrip dashboard → Tools → Publisher API → এখানে পাবেন
+    <div class="card-hd">🔑 RSS Platform Credentials</div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px 13px;font-size:12px;color:#1d4ed8;margin-bottom:14px">
+      ℹ️ প্রতিটা platform এ আলাদা account খুলুন → API Key নিন → নিচে বসান
     </div>
-    <label class="lbl">CPAGrip User ID</label>
-    <input class="inp" id="cpaUid" value="${cpa.userId||''}" placeholder="e.g. 123456">
-    <label class="lbl">CPAGrip API Key</label>
-    <input class="inp" id="cpaKey" value="${cpa.key||''}" placeholder="32-character key">
-    <button class="btn bp" id="saveCPA">💾 Save CPAGrip Credentials</button>
+    <div id="rssCreds"></div>
+    <button class="btn bp mt8" id="saveAllCreds">💾 Save All RSS Credentials</button>
   </div>
 
   <!-- Payout Mode -->
@@ -2302,12 +2402,39 @@ async function loadAdminSettings(c){
     S.payoutMode=selMode;
     toast('Payout mode saved!','s');
   };
-  // Save CPA
-  $('#saveCPA').onclick=async()=>{
-    const uid=$('#cpaUid').value.trim(), key=$('#cpaKey').value.trim();
-    if(!uid||!key){ toast('Fill both fields','e'); return; }
-    await fDB.ref('settings/cpa').set({userId:uid,key});
-    toast('CPAGrip credentials saved!','s');
+  // Build RSS credentials UI
+  const rssCreds=document.getElementById('rssCreds');
+  if(rssCreds){
+    const credsSnap=await fDB.ref('settings/rss').once('value');
+    const allCreds=credsSnap.val()||{};
+    rssCreds.innerHTML=Object.entries(RSS_PLATFORMS).map(([id,p])=>{
+      const c=allCreds[id]||{};
+      const needsUserId=id!=='mylead'; // mylead only needs key/token
+      return `<div style="border:1.5px solid #dbeafe;border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:20px">${p.icon}</span>
+          <span style="font-weight:700;font-size:13px;color:#1e40af">${p.name}</span>
+          <span style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}44;border-radius:5px;padding:1px 8px;font-size:10px;font-weight:700;margin-left:auto">${id.toUpperCase()}</span>
+        </div>
+        ${needsUserId?`<label class="lbl">User ID / Publisher ID</label>
+        <input class="inp" id="rc_uid_${id}" value="${c.userId||''}" placeholder="Your ${p.name} User ID" style="margin-bottom:8px">`:''}
+        <label class="lbl">${id==='mylead'?'Token / API Key':'API Key'}</label>
+        <input class="inp" id="rc_key_${id}" value="${c.key||''}" placeholder="Your ${p.name} API Key">
+      </div>`;
+    }).join('');
+  }
+  // Save all credentials
+  document.getElementById('saveAllCreds').onclick=async()=>{
+    const updates={};
+    for(const [id,p] of Object.entries(RSS_PLATFORMS)){
+      const uidEl=document.getElementById(`rc_uid_${id}`);
+      const keyEl=document.getElementById(`rc_key_${id}`);
+      const uid2=uidEl?.value.trim()||'';
+      const key2=keyEl?.value.trim()||'';
+      if(uid2||key2) updates[id]={userId:uid2,key:key2};
+    }
+    await fDB.ref('settings/rss').update(updates);
+    toast('All RSS credentials saved! ✓','s');
   };
   // Save rates
   $('#saveRates').onclick=async()=>{
