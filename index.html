@@ -334,16 +334,22 @@ const CFG = {
   defaultIframe: '',
   // Script-er moddhe window.open system:
   defaultScript: `
-    const offerUrl = 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id='uid;
-    window.open(offerUrl, '_blank');
-    const embedArea = document.getElementById('wallEmbed');
-    if(embedArea) {
-      embedArea.innerHTML = '<div style="padding:40px; text-align:center; font-family:sans-serif;">' +
-        '<h2 style="color:#2563eb;">Offer Wall Opened!</h2>' +
-        '<p style="margin-top:10px;">Please complete the offers in the new tab to earn points.</p>' +
-        '<button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:#2563eb; color:#fff; border:none; border-radius:8px; cursor:pointer;">Back to App</button>' +
-        '</div>';
-    }
+    const uid = S.user.uid;
+
+const offerUrl = 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id=' + uid;
+
+const embedArea = document.getElementById('wallEmbed');
+if(embedArea) {
+  embedArea.innerHTML = `
+    <div style="padding:40px; text-align:center;">
+      <h2 style="color:#2563eb;">Open Offer Wall</h2>
+      <button onclick="window.open('${offerUrl}','_blank')" 
+        style="margin-top:20px; padding:10px 20px; background:#2563eb; color:#fff; border:none; border-radius:8px;">
+        Start Earning
+      </button>
+    </div>
+  `;
+   }
   `,
   defaultRSS:  'cpagrip',
 },
