@@ -2138,7 +2138,8 @@ async function loadAdminUsers(c){
       toast(!cur?'RSS Feed enabled!':'RSS Feed disabled','s');
     };
   });
-}(c){
+}
+   async function loadWithdrawals(c){
   const snap=await fDB.ref('withdrawals').orderByChild('status').equalTo('pending').once('value');
   const snap2=await fDB.ref('withdrawals').orderByChild('createdAt').limitToLast(20).once('value');
   const data=snap2.val()||{};
