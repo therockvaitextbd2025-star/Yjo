@@ -186,7 +186,7 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
 .arm svg.ring{position:absolute;inset:0;transform:rotate(-90deg)}
 .arm circle{fill:none;stroke-width:5}
 .arm .trk{stroke:rgba(255,255,255,.1)}
-.arm .prg{stroke:url(#adGrad);stroke-linecap:round;stroke-dasharray:345;stroke-dashoffset:345;transition:stroke-dashoffset .25s linear}
+.arm .prg{stroke:url(#adGrad);stroke-linecap:round;stroke-dasharray:345;stroke-dashoffset:345;transition:stroke-dashoffset .2s linear}
 .arm-n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#60a5fa}
 .ad-ttl{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;color:#fff}
 .ad-sub{font-size:13px;color:#94a3b8;max-width:280px;margin-bottom:22px;line-height:1.6}
@@ -223,7 +223,7 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
 <body>
 
 <!-- Adsterra Social Bar -->
-<script src="https://pl29181398.profitablecpmratenetwork.com/a6/f7/29/a6f729ef48274bc2389ce3b70ca8fb23.js"></script>
+<script src="https://pl29327205.profitablecpmratenetwork.com/b1/4e/fc/b14efc2b98e49b3942ea2d168a4e1f1c.js"></script>
 
 <!-- LOADER -->
 <div id="ldr"><div class="sp"></div><div class="sl-t">Loading EarnZone Pro…</div></div>
@@ -246,7 +246,7 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
       <circle class="trk" cx="60" cy="60" r="55"/>
       <circle class="prg" id="adRing" cx="60" cy="60" r="55"/>
     </svg>
-    <div class="arm-n" id="adNum">10</div>
+    <div class="arm-n" id="adNum">8</div>
   </div>
   <div class="ad-ttl" id="adTtl">📺 Ad is Playing</div>
   <div class="ad-sub" id="adSub">Please wait — you cannot skip this ad</div>
@@ -254,7 +254,7 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
     <div class="ad-prg-lb"><span id="adPLb">seconds remaining</span><span id="adPCt" style="color:#60a5fa;font-weight:700"></span></div>
     <div class="prb"><div class="prf" id="adPBar" style="width:0%"></div></div>
   </div>
-  <div class="ad-warn" id="adWarn">🚫 Do not close this page! Stay here for 10 seconds.</div>
+  <div class="ad-warn" id="adWarn">🚫 Do not close this page! Stay here for 8 seconds.</div>
 </div>
 
 <!-- NOTICE MODAL -->
@@ -292,13 +292,13 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
 
 // ─── FIREBASE INIT ────────────────────────────────────
 firebase.initializeApp({
-  apiKey:"AIzaSyAFqLj3oWFtmshnSbIzRzZgZxCM9OMz7Ek",
-  authDomain:"earnzip-a8766.firebaseapp.com",
-  databaseURL:"https://earnzip-a8766-default-rtdb.firebaseio.com",
-  projectId:"earnzip-a8766",
-  storageBucket:"earnzip-a8766.firebasestorage.app",
-  messagingSenderId:"237716364029",
-  appId:"1:237716364029:web:62819724ea1736c5e67c94"
+  apiKey:"AIzaSyCxAj5dRiEvcvp26J8yYY6BSzVBXuBAEjk",
+  authDomain:"earn-zone-997fb.firebaseapp.com",
+  databaseURL:"https://earn-zone-997fb-default-rtdb.firebaseio.com",
+  projectId:"earn-zone-997fb",
+  storageBucket:"earn-zone-997fb.firebasestorage.app",
+  messagingSenderId:"267809609849",
+  appId:"1:267809609849:web:183f53725620cffd259ca8"
 });
 const fAuth = firebase.auth();
 const fDB   = firebase.database();
@@ -306,9 +306,9 @@ fAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 // ─── CONFIG ───────────────────────────────────────────
 const CFG = {
-  adSec:10, adsPerWall:5, unlock24h:86400000, adGapMs:5000,
+  adSec:8, adsPerWall:4, unlock24h:86400000, adGapMs:5000,
   minUSD:5, minRefs:5, maxDevAcc:2,
-  smartLink:'https://www.profitablecpmratenetwork.com/ac86w9xcd?key=76ee09aaa6787e25d440bc993d2dfdd5',
+  smartLink:'https://www.profitablecpmratenetwork.com/umex8g0z7?key=60dc4ecdfe325f516355a547ff213570',
   earnCountry:{BD:.10,IN:.10,PK:.10,NG:.10,GH:.12,PH:.12,EG:.12,KE:.12},
   earnHi:.50, earnDef:.30,
   hiCC:['US','GB','CA','AU','DE','FR','NL','SE','NO','DK','CH','AT','SG','JP','NZ','IE'],
@@ -317,57 +317,89 @@ const CFG = {
   cpaKey:'YOUR_CPAGRIP_API_KEY',
   rssProxy:'https://api.allorigins.win/raw?url=',
   walls:[
-    // ── DEFAULT LINKS (code এ থাকলে Firebase call নেই) ──
-    // যেকোনো platform এর iframe URL, script code, বা rss বসান
-    // খালি রাখলে Admin Panel থেকে নেবে
-    {id:'w1',icon:'🔥',color:'#ef4444',
-      defaultName:'CPA Offers',       defaultDesc:'Complete CPA offers and earn',
-      defaultIframe:'',               // CPAGrip/Lootably/AdGem iframe URL এখানে
-      defaultScript:'',               // Script code এখানে
-      defaultRSS:'cpagrip',           // RSS: 'cpagrip','ogads','adgate','adscend','mylead','adworkm'
-      defaultMode:'rss',              // 'iframe','script','rss'
+    // ════════════════════════════════════════════════════════
+    //  OFFERWALL SETTINGS — CODE-FIRST SYSTEM
+    //  এখানে link থাকলে Firebase call হবে না
+    //  খালি রাখলে Admin Panel থেকে নেবে
+    //
+    //  embedMode: 'iframe' | 'script' | 'rss'
+    //  defaultRSS: 'cpagrip'|'ogads'|'adgate'|'adscend'|'mylead'|'adworkm'
+    // ════════════════════════════════════════════════════════
+
+    { id:'w1', icon:'🔥', color:'#ef4444',
+      // ── Offerwall 1 Settings ──
+      defaultName: 'CPA Offers',
+      defaultDesc: 'Complete CPA offers and earn rewards',
+      embedMode:   'rss',            // ← 'iframe' | 'script' | 'rss'
+      // iFrame URL (embedMode='iframe' হলে এটা কাজ করবে):
+      defaultIframe: '',             // ← https://your-offerwall.com?user={uid}
+      // Script code (embedMode='script' হলে এটা কাজ করবে):
+      defaultScript: '',             // ← <script>...your script code...</script>
+      // RSS platform (embedMode='rss' হলে এটা কাজ করবে):
+      defaultRSS:  'cpagrip',        // ← cpagrip | ogads | adgate | adscend | mylead | adworkm
     },
-    {id:'w2',icon:'📋',color:'#3b82f6',
-      defaultName:'Survey Rewards',   defaultDesc:'Share opinion and earn rewards',
-      defaultIframe:'',               // CPX Research iframe URL এখানে
-      defaultScript:'',               // CPX Script code এখানে
-      defaultRSS:'',
-      defaultMode:'iframe',
+
+    { id:'w2', icon:'📋', color:'#3b82f6',
+      // ── Offerwall 2 Settings ──
+      defaultName: 'Survey Rewards',
+      defaultDesc: 'Share your opinion and earn',
+      embedMode:   'iframe',
+      // iFrame URL:
+      defaultIframe: '',             // ← https://offers.cpx-research.com/index.php?app_id=32801&ext_user_id={uid}&subid_1=w2
+      // Script code:
+      defaultScript: '',             // ← CPX Script Tag code এখানে
+      // RSS:
+      defaultRSS:  '',
     },
-    {id:'w3',icon:'📱',color:'#8b5cf6',
-      defaultName:'Mobile Offers',    defaultDesc:'App installs and downloads',
-      defaultIframe:'',               // OGAds/AdGem iframe এখানে
-      defaultScript:'',
-      defaultRSS:'ogads',
-      defaultMode:'rss',
+
+    { id:'w3', icon:'📱', color:'#8b5cf6',
+      // ── Offerwall 3 Settings ──
+      defaultName: 'Mobile Offers',
+      defaultDesc: 'App installs and mobile tasks',
+      embedMode:   'rss',
+      defaultIframe: '',             // ← OGAds/AdGem iframe URL এখানে
+      defaultScript: '',
+      defaultRSS:  'ogads',          // ← ogads | adgate | adscend | mylead | adworkm
     },
-    {id:'w4',icon:'🎮',color:'#10b981',
-      defaultName:'Gaming Zone',      defaultDesc:'Games and achievements',
-      defaultIframe:'',               // Lootably/AdGate iframe এখানে
-      defaultScript:'',
-      defaultRSS:'adgate',
-      defaultMode:'rss',
+
+    { id:'w4', icon:'🎮', color:'#10b981',
+      // ── Offerwall 4 Settings ──
+      defaultName: 'Gaming Zone',
+      defaultDesc: 'Games, achievements and more',
+      embedMode:   'rss',
+      defaultIframe: '',             // ← AdGate/Lootably iframe URL এখানে
+      defaultScript: '',
+      defaultRSS:  'adgate',
     },
-    {id:'w5',icon:'▶️',color:'#f59e0b',
-      defaultName:'Video Tasks',      defaultDesc:'Watch videos and earn',
-      defaultIframe:'',               // Adscend/BitLabs iframe এখানে
-      defaultScript:'',
-      defaultRSS:'adscend',
-      defaultMode:'rss',
+
+    { id:'w5', icon:'▶️', color:'#f59e0b',
+      // ── Offerwall 5 Settings ──
+      defaultName: 'Video Tasks',
+      defaultDesc: 'Watch videos and earn coins',
+      embedMode:   'rss',
+      defaultIframe: '',             // ← Adscend/BitLabs iframe URL এখানে
+      defaultScript: '',
+      defaultRSS:  'adscend',
     },
-    {id:'w6',icon:'👑',color:'#ec4899',
-      defaultName:'Premium Offers',   defaultDesc:'High payout premium tasks',
-      defaultIframe:'',               // AdWork Media iframe এখানে
-      defaultScript:'',
-      defaultRSS:'adworkm',
-      defaultMode:'rss',
+
+    { id:'w6', icon:'👑', color:'#ec4899',
+      // ── Offerwall 6 Settings ──
+      defaultName: 'Premium Offers',
+      defaultDesc: 'High payout premium tasks',
+      embedMode:   'rss',
+      defaultIframe: '',             // ← AdWork Media iframe URL এখানে
+      defaultScript: '',
+      defaultRSS:  'adworkm',
     },
-    {id:'w7',icon:'💎',color:'#0891b2',
-      defaultName:'Special Offers',   defaultDesc:'Exclusive high reward tasks',
-      defaultIframe:'',               // MyLead/Theorem Reach iframe এখানে
-      defaultScript:'',
-      defaultRSS:'mylead',
-      defaultMode:'rss',
+
+    { id:'w7', icon:'💎', color:'#0891b2',
+      // ── Offerwall 7 Settings ──
+      defaultName: 'Special Offers',
+      defaultDesc: 'Exclusive high reward tasks',
+      embedMode:   'rss',
+      defaultIframe: '',             // ← MyLead/Theorem Reach iframe URL এখানে
+      defaultScript: '',
+      defaultRSS:  'mylead',
     },
   ],
   methods:['bkash','nagad','paypal','visa','payoneer','usdt'],
@@ -403,7 +435,7 @@ const LANGS={
     iv:"✓ I've Verified",re:'Resend Email',veok:'Email verified!',
     db:'Dashboard',wl:'Wallet',of:'Offers',pr:'Profile',ad:'Admin',
     wa:'📺 Watch Ad',adTtl:'📺 Ad is Playing',adSub:'Please wait — you cannot skip this ad',
-    adWrn:'🚫 Do not close! Stay here for 10 seconds.',adPLb:'seconds remaining',
+    adWrn:'🚫 Do not close! Stay here for 8 seconds.',adPLb:'seconds remaining',
     ulk:'✅ Unlocked',lk:'🔒 Locked',ua:'Unlock Access',
     wd:'Withdraw',wt:'Cash Out Earnings',
     bal:'Balance ($)',te:'Total Earned',rf:'Referrals',aw:'Ads Watched',oc:'Offers Done',ed:'Earned Today',
@@ -451,7 +483,7 @@ const LANGS={
     iv:'✓ যাচাই করেছি',re:'আবার পাঠান',veok:'ইমেইল যাচাই সম্পন্ন!',
     db:'ড্যাশবোর্ড',wl:'ওয়ালেট',of:'অফার',pr:'প্রোফাইল',ad:'অ্যাডমিন',
     wa:'📺 বিজ্ঞাপন দেখুন',adTtl:'📺 বিজ্ঞাপন চলছে',adSub:'অপেক্ষা করুন — এড স্কিপ করা যাবে না',
-    adWrn:'🚫 পেজ বন্ধ করবেন না! ১০ সেকেন্ড থাকুন।',adPLb:'সেকেন্ড বাকি',
+    adWrn:'🚫 পেজ বন্ধ করবেন না! ৮ সেকেন্ড থাকুন।',adPLb:'সেকেন্ড বাকি',
     ulk:'✅ আনলক',lk:'🔒 লক',ua:'আনলক করুন',
     wd:'উত্তোলন',wt:'আয় তুলে নিন',
     bal:'ব্যালেন্স ($)',te:'মোট আয়',rf:'রেফারেল',aw:'দেখা বিজ্ঞাপন',oc:'সম্পন্ন অফার',ed:'আজকের আয়',
@@ -497,7 +529,7 @@ const LANGS={
     ve:'ای میل تصدیق',vd:'تصدیقی لنک ان باکس میں دیکھیں۔',iv:'✓ تصدیق کر دی',re:'دوبارہ بھیجیں',veok:'تصدیق ہو گئی!',
     db:'ڈیش بورڈ',wl:'والٹ',of:'آفرز',pr:'پروفائل',ad:'ایڈمن',
     wa:'📺 اشتہار دیکھیں',adTtl:'📺 اشتہار چل رہا ہے',adSub:'انتظار کریں — چھوڑ نہیں سکتے',
-    adWrn:'🚫 صفحہ بند نہ کریں! 10 سیکنڈ یہاں رہیں۔',adPLb:'سیکنڈ باقی',
+    adWrn:'🚫 صفحہ بند نہ کریں! 8 سیکنڈ یہاں رہیں۔',adPLb:'سیکنڈ باقی',
     ulk:'✅ کھلا',lk:'🔒 بند',ua:'رسائی کھولیں',
     wd:'نکاسی',wt:'کمائی نکالیں',
     bal:'بیلنس ($)',te:'کل کمائی',rf:'ریفرل',aw:'اشتہار',oc:'آفرز',ed:'آج کی کمائی',
@@ -537,7 +569,7 @@ const LANGS={
     ve:'ईमेल सत्यापन',vd:'आपके ईमेल में सत्यापन लिंक भेजा है।',iv:'✓ सत्यापित किया',re:'दोबारा भेजें',veok:'ईमेल सत्यापित!',
     db:'डैशबोर्ड',wl:'वॉलेट',of:'ऑफर',pr:'प्रोफाइल',ad:'एडमिन',
     wa:'📺 विज्ञापन देखें',adTtl:'📺 विज्ञापन चल रहा है',adSub:'प्रतीक्षा करें — स्किप नहीं हो सकता',
-    adWrn:'🚫 पेज बंद न करें! 10 सेकंड रुकें।',adPLb:'सेकंड शेष',
+    adWrn:'🚫 पेज बंद न करें! 8 सेकंड रुकें।',adPLb:'सेकंड शेष',
     ulk:'✅ अनलॉक',lk:'🔒 लॉक',ua:'अनलॉक करें',
     wd:'निकासी',wt:'कमाई निकालें',
     bal:'बैलेंस ($)',te:'कुल कमाई',rf:'रेफरल',aw:'विज्ञापन',oc:'ऑफर',ed:'आज की कमाई',
@@ -577,7 +609,7 @@ const LANGS={
     ve:'تحقق من البريد',vd:'تم إرسال رابط التحقق. انقر عليه.',iv:'✓ تم التحقق',re:'إعادة الإرسال',veok:'تم التحقق!',
     db:'لوحة القيادة',wl:'المحفظة',of:'العروض',pr:'الملف الشخصي',ad:'الإدارة',
     wa:'📺 شاهد إعلانًا',adTtl:'📺 الإعلان يعمل',adSub:'انتظر — لا يمكن تخطي الإعلان',
-    adWrn:'🚫 لا تغلق الصفحة! ابق هنا 10 ثوانٍ.',adPLb:'ثوانٍ متبقية',
+    adWrn:'🚫 لا تغلق الصفحة! ابق هنا 8 ثوانٍ.',adPLb:'ثوانٍ متبقية',
     ulk:'✅ مفتوح',lk:'🔒 مغلق',ua:'فتح الوصول',
     wd:'سحب',wt:'سحب الأرباح',
     bal:'الرصيد ($)',te:'إجمالي الأرباح',rf:'الإحالات',aw:'الإعلانات',oc:'العروض',ed:'أرباح اليوم',
@@ -617,7 +649,7 @@ const LANGS={
     ve:'Vérifier l\'e-mail',vd:'Lien de vérification envoyé. Cliquez dessus.',iv:'✓ Vérifié',re:'Renvoyer',veok:'E-mail vérifié!',
     db:'Tableau de bord',wl:'Portefeuille',of:'Offres',pr:'Profil',ad:'Admin',
     wa:'📺 Voir une pub',adTtl:'📺 Publicité en cours',adSub:'Veuillez patienter — pas de saut possible',
-    adWrn:'🚫 Ne fermez pas! Restez 10 secondes.',adPLb:'secondes restantes',
+    adWrn:'🚫 Ne fermez pas! Restez 8 secondes.',adPLb:'secondes restantes',
     ulk:'✅ Débloqué',lk:'🔒 Verrouillé',ua:'Débloquer l\'accès',
     wd:'Retrait',wt:'Encaisser',
     bal:'Solde ($)',te:'Total gagné',rf:'Parrainages',aw:'Pubs vues',oc:'Offres',ed:'Gagné aujourd\'hui',
@@ -657,7 +689,7 @@ const LANGS={
     ve:'Verificar correo',vd:'Se envió un enlace de verificación a tu correo.',iv:'✓ Verificado',re:'Reenviar',veok:'¡Correo verificado!',
     db:'Panel',wl:'Cartera',of:'Ofertas',pr:'Perfil',ad:'Admin',
     wa:'📺 Ver anuncio',adTtl:'📺 Anuncio en reproducción',adSub:'Espera — no puedes omitir este anuncio',
-    adWrn:'🚫 ¡No cierres! Quédate 10 segundos.',adPLb:'segundos restantes',
+    adWrn:'🚫 ¡No cierres! Quédate 8 segundos.',adPLb:'segundos restantes',
     ulk:'✅ Desbloqueado',lk:'🔒 Bloqueado',ua:'Desbloquear acceso',
     wd:'Retiro',wt:'Retirar ganancias',
     bal:'Saldo ($)',te:'Total ganado',rf:'Referidos',aw:'Anuncios',oc:'Ofertas',ed:'Ganado hoy',
@@ -696,7 +728,7 @@ const LANGS={
     ve:'Verifikasi Email',vd:'Klik link verifikasi di inbox Anda.',iv:'✓ Sudah Diverifikasi',re:'Kirim Ulang',veok:'Email terverifikasi!',
     db:'Dashboard',wl:'Dompet',of:'Penawaran',pr:'Profil',ad:'Admin',
     wa:'📺 Tonton Iklan',adTtl:'📺 Iklan Sedang Diputar',adSub:'Harap tunggu — tidak bisa dilewati',
-    adWrn:'🚫 Jangan tutup! Tunggu 10 detik.',adPLb:'detik tersisa',
+    adWrn:'🚫 Jangan tutup! Tunggu 8 detik.',adPLb:'detik tersisa',
     ulk:'✅ Terbuka',lk:'🔒 Terkunci',ua:'Buka Akses',wd:'Tarik Dana',wt:'Cairkan Penghasilan',
     bal:'Saldo ($)',te:'Total Penghasilan',rf:'Referral',aw:'Iklan',oc:'Penawaran',ed:'Hari Ini',
     yrc:'Kode Referral Anda',scd:'Bagikan kode ini',cc2:'Salin Kode',cpd:'Disalin!',
@@ -729,7 +761,7 @@ const LANGS={
     ve:'E-posta Doğrula',vd:'Gelen kutunuzdaki linke tıklayın.',iv:'✓ Doğruladım',re:'Tekrar Gönder',veok:'Doğrulandı!',
     db:'Panel',wl:'Cüzdan',of:'Teklifler',pr:'Profil',ad:'Yönetici',
     wa:'📺 Reklam İzle',adTtl:'📺 Reklam Oynatılıyor',adSub:'Lütfen bekleyin — atlanamaz',
-    adWrn:'🚫 Kapatmayın! 10 saniye bekleyin.',adPLb:'saniye kaldı',
+    adWrn:'🚫 Kapatmayın! 8 saniye bekleyin.',adPLb:'saniye kaldı',
     ulk:'✅ Açık',lk:'🔒 Kilitli',ua:'Erişimi Aç',wd:'Para Çek',wt:'Kazancı Çek',
     bal:'Bakiye ($)',te:'Toplam',rf:'Referanslar',aw:'Reklamlar',oc:'Teklifler',ed:'Bugün',
     yrc:'Referans Kodunuz',scd:'Kodu paylaşın',cc2:'Kopyala',cpd:'Kopyalandı!',
@@ -761,7 +793,7 @@ const LANGS={
     ve:'Verificar E-mail',vd:'Clique no link na sua caixa de entrada.',iv:'✓ Já Verifiquei',re:'Reenviar',veok:'Verificado!',
     db:'Painel',wl:'Carteira',of:'Ofertas',pr:'Perfil',ad:'Admin',
     wa:'📺 Assistir Anúncio',adTtl:'📺 Anúncio em Execução',adSub:'Aguarde — não pode ser pulado',
-    adWrn:'🚫 Não feche! Fique por 10 segundos.',adPLb:'segundos restantes',
+    adWrn:'🚫 Não feche! Fique por 8 segundos.',adPLb:'segundos restantes',
     ulk:'✅ Desbloqueado',lk:'🔒 Bloqueado',ua:'Desbloquear',wd:'Sacar',wt:'Sacar Ganhos',
     bal:'Saldo ($)',te:'Total',rf:'Referências',aw:'Anúncios',oc:'Ofertas',ed:'Hoje',
     yrc:'Seu Código',scd:'Compartilhe o código',cc2:'Copiar',cpd:'Copiado!',
@@ -820,20 +852,8 @@ const CACHE={
   },
   // Smart get: version check করে, same হলে local, আলাদা হলে Firebase
   async smartGet(wallId){
-    const localVer=this.getLocalVersion(wallId);
-    // Firebase থেকে শুধু version field আনো (tiny call)
-    const verSnap=await fDB.ref(`walls/${wallId}/version`).once('value');
-    const remoteVer=String(verSnap.val()||'0');
-    if(localVer===remoteVer && localVer!=='0'){
-      // Version same → localStorage থেকে নাও (0 full call)
-      const local=this.getLocal(wallId);
-      if(local) return local;
-    }
-    // Version আলাদা বা cache নেই → full Firebase call
-    const snap=await fDB.ref(`walls/${wallId}`).once('value');
-    const data=snap.val()||{};
-    this.setLocal(wallId,data,remoteVer||'1');
-    return data;
+    // Firebase call নেই — শুধু S.wallData থেকে নাও
+    return S.wallData[wallId]||{};
   }
 };
 const T = k => (LANGS[S.lang]?.t[k] || LANGS.en.t[k] || k);
@@ -932,7 +952,6 @@ function startAd(wallId, type='unlock', cb=null){
   window.onpopstate=()=>{ history.pushState(null,null,location.href); };
   // Show corner counter
   const cc=$('#cc'); cc.style.display='flex'; cc.textContent=adSec_;
-  // Update ring (circumference for r=55: 2*π*55 ≈ 345)
   const ring=$('#adRing'); ring.style.strokeDashoffset='345';
   $('#adNum').textContent=adSec_;
   $('#adPBar').style.width='0%';
@@ -1203,11 +1222,7 @@ function showNoticeFinal(notice){
 }
 
 window.EZ={
-  closeNM: function() {
-  $('#nm').style.display = 'none';
-  S.currentNotice = null;
-  render();
-},
+  closeNM:(){ $('#nm').style.display='none'; S.currentNotice=null; render(); },
   closeLM:()=>{ $('#lm').style.display='none'; render(); },
   openLM:()=>{
     buildLangModal();
@@ -1260,28 +1275,29 @@ async function loadUserData(uid){
 }
 
 async function getWallData(){
-  const snap=await fDB.ref('walls').once('value');
-  const saved=snap.val()||{};
+  // ── PURE CODE-ONLY SYSTEM — Firebase call নেই ──
+  // Code এ link আছে → দেখাবে
+  // Code এ link নেই → দেখাবে না
+  // Firebase এ কোনো call নেই
   const walls={};
   CFG.walls.forEach((w,i)=>{
-    const fb=saved[w.id]||{};
-    // Code এ default আছে? → সেটা use করো (Firebase call বাঁচে)
-    // Admin Panel এ বসিয়েছে? → সেটা override করবে
-    const iframe = fb.link||w.defaultIframe||'';
-    const script = fb.scriptCode||w.defaultScript||'';
-    const rssPlat= fb.rssPlatform||w.defaultRSS||'cpagrip';
-    const mode   = fb.embedMode||w.defaultMode||'iframe';
+    const hasIframe = (w.defaultIframe||'').trim()!=='';
+    const hasScript = (w.defaultScript||'').trim()!=='';
+    const hasRSS    = (w.defaultRSS||'').trim()!=='';
+    const hasLink   = hasIframe||hasScript||hasRSS;
+    if(!hasLink) return; // code এ নেই → skip, দেখাবে না
     walls[w.id]={
       id:w.id, icon:w.icon, color:w.color,
-      name:fb.name||w.defaultName||`Offerwall ${i+1}`,
-      desc:fb.desc||w.defaultDesc||'Complete offers and earn',
-      link:iframe, scriptCode:script,
-      rssPlatform:rssPlat, embedMode:mode,
-      useRSS:fb.useRSS||(mode==='rss'),
-      active:fb.active!==false,
-      version:fb.version||'0',
-      // Flag: code default kullanılıyor mu?
-      usingDefault:!fb.embedMode,
+      name:      w.defaultName||`Offerwall ${i+1}`,
+      desc:      w.defaultDesc||'',
+      link:      w.defaultIframe||'',
+      scriptCode:w.defaultScript||'',
+      rssPlatform:w.defaultRSS||'',
+      embedMode: w.embedMode||'rss',
+      useRSS:    (w.embedMode||'rss')==='rss',
+      active:    true,
+      version:   '0',
+      usingDefault: true,
     };
   });
   S.wallData=walls;
@@ -1305,7 +1321,7 @@ function msToHM(ms){
 
 // POSTBACK URL for user
 function getPostbackUrl(uid,wallId){
-  return `https://earnzip-a8766-default-rtdb.firebaseio.com/postbacks/${uid}_${wallId}.json`;
+  return `https://earn-zone-997fb-default-rtdb.firebaseio.com/postbacks/${uid}_${wallId}.json`;
 }
 // Postback note to show users
 function getPostbackNote(uid,wallId){
@@ -1990,6 +2006,7 @@ function openRSSOffer(encodedLink, wallId){
   // After opening show a note
   toast('Complete the offer then come back here!','i',4000);
 }
+}
 
 // ─── PROFILE PAGE ─────────────────────────────────────
 function buildProfile(){
@@ -2138,8 +2155,7 @@ async function loadAdminUsers(c){
       toast(!cur?'RSS Feed enabled!':'RSS Feed disabled','s');
     };
   });
-}
-   async function loadWithdrawals(c){
+}(c){
   const snap=await fDB.ref('withdrawals').orderByChild('status').equalTo('pending').once('value');
   const snap2=await fDB.ref('withdrawals').orderByChild('createdAt').limitToLast(20).once('value');
   const data=snap2.val()||{};
@@ -2576,7 +2592,7 @@ window.addEventListener('popstate',()=>{
 
 // ─── POSTBACK LISTENER (REST-based) ───────────────────
 // When CPA network hits postback URL, write to Firebase:
-// PUT https://earnzip-a8766-default-rtdb.firebaseio.com/postbacks/{uid}_{wallId}.json
+// PUT https://earn-zone-997fb-default-rtdb.firebaseio.com/postbacks/{uid}_{wallId}.json
 // body: {"amount":0.30,"offerId":"xxx"}
 // The app checks /postbacks on load and processes them.
 (async()=>{
@@ -2753,13 +2769,13 @@ console.log('%c◆ EarnZone Pro v3 — RSS + Custom Payout + Postback', 'color:#
 <!-- Adsterra Banner Ad (place in site footer or sidebar) -->
 <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:10;display:none" id="banAd">
   <script>
-    atOptions={'key':'7481a295bbedc15aca65147556093790','format':'iframe','height':50,'width':320,'params':{}};
+    atOptions={'key':'7ef7430425eb8049f5ca78a4fdb79c59','format':'iframe','height':300,'width':160,'params':{}};
   </script>
-  <script src="https://www.highperformanceformat.com/7481a295bbedc15aca65147556093790/invoke.js"></script>
+  <script src="https://www.highperformanceformat.com/7ef7430425eb8049f5ca78a4fdb79c59/invoke.js"></script>
 </div>
 
-<!-- Adsterra Native Banner -->
-<script async data-cfasync="false" src="https://pl29181399.profitablecpmratenetwork.com/57756532467a1fc7800d1e652f9c78a3/invoke.js"></script>
-<div id="container-57756532467a1fc7800d1e652f9c78a3" style="display:none"></div>
+<!-- Native Banner -->
+<script async="async" data-cfasync="false" src="https://pl29327203.profitablecpmratenetwork.com/71a6c6e0d4a4a4c387b3be64cbb9dc23/invoke.js"></script>
+<div id="container-71a6c6e0d4a4a4c387b3be64cbb9dc23"></div>
 </body>
 </html>
