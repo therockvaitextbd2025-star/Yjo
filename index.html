@@ -327,17 +327,27 @@ const CFG = {
     // ════════════════════════════════════════════════════════
 
     { id:'w1', icon:'🔥', color:'#ef4444',
-      // ── Offerwall 1 Settings ──
-      defaultName: 'CPA Offers',
-      defaultDesc: 'Complete CPA offers and earn rewards',
-      embedMode:   'iframe',            // ← 'iframe' | 'script' | 'rss'
-      // iFrame URL (embedMode='iframe' হলে এটা কাজ করবে):
-      defaultIframe: 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id={uid}',             // ← https://your-offerwall.com?user={uid}
-      // Script code (embedMode='script' হলে এটা কাজ করবে):
-      defaultScript: '',            
-      // RSS platform (embedMode='rss' হলে এটা কাজ করবে):
-      defaultRSS:  'cpagrip',        // ← cpagrip | ogads | adgate | adscend | mylead | adworkm
-    },
+  // ── Offerwall 1 Settings ──
+  defaultName: 'CPA Offers',
+  defaultDesc: 'Complete CPA offers and earn rewards',
+  embedMode:   'script', 
+  defaultIframe: '',
+  // Script-er moddhe window.open system:
+  defaultScript: `
+    const offerUrl = 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id=' + S.user.uid;
+    window.open(offerUrl, '_blank');
+    const embedArea = document.getElementById('wallEmbed');
+    if(embedArea) {
+      embedArea.innerHTML = '<div style="padding:40px; text-align:center; font-family:sans-serif;">' +
+        '<h2 style="color:#2563eb;">Offer Wall Opened!</h2>' +
+        '<p style="margin-top:10px;">Please complete the offers in the new tab to earn points.</p>' +
+        '<button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:#2563eb; color:#fff; border:none; border-radius:8px; cursor:pointer;">Back to App</button>' +
+        '</div>';
+    }
+  `,
+  defaultRSS:  'cpagrip',
+},
+
 
     { id:'w2', icon:'📋', color:'#3b82f6',
       // ── Offerwall 2 Settings ──
