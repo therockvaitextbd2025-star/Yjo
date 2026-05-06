@@ -223,7 +223,7 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
 <body>
 
 <!-- Adsterra Social Bar -->
-<script src="https://pl29327205.profitablecpmratenetwork.com/b1/4e/fc/b14efc2b98e49b3942ea2d168a4e1f1c.js"></script>
+<script src="https://pl29181398.profitablecpmratenetwork.com/a6/f7/29/a6f729ef48274bc2389ce3b70ca8fb23.js"></script>
 
 <!-- LOADER -->
 <div id="ldr"><div class="sp"></div><div class="sl-t">Loading EarnZone Pro…</div></div>
@@ -292,13 +292,13 @@ select.inp{cursor:pointer;appearance:none;background-image:url("data:image/svg+x
 
 // ─── FIREBASE INIT ────────────────────────────────────
 firebase.initializeApp({
-  apiKey:"AIzaSyCxAj5dRiEvcvp26J8yYY6BSzVBXuBAEjk",
-  authDomain:"earn-zone-997fb.firebaseapp.com",
-  databaseURL:"https://earn-zone-997fb-default-rtdb.firebaseio.com",
-  projectId:"earn-zone-997fb",
-  storageBucket:"earn-zone-997fb.firebasestorage.app",
-  messagingSenderId:"267809609849",
-  appId:"1:267809609849:web:183f53725620cffd259ca8"
+  apiKey:"AIzaSyAFqLj3oWFtmshnSbIzRzZgZxCM9OMz7Ek",
+  authDomain:"earnzip-a8766.firebaseapp.com",
+  databaseURL:"https://earnzip-a8766-default-rtdb.firebaseio.com",
+  projectId:"earnzip-a8766",
+  storageBucket:"earnzip-a8766.firebasestorage.app",
+  messagingSenderId:"237716364029",
+  appId:"1:237716364029:web:62819724ea1736c5e67c94"
 });
 const fAuth = firebase.auth();
 const fDB   = firebase.database();
@@ -308,7 +308,7 @@ fAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 const CFG = {
   adSec:10, adsPerWall:5, unlock24h:86400000, adGapMs:5000,
   minUSD:5, minRefs:5, maxDevAcc:2,
-  smartLink:'https://www.profitablecpmratenetwork.com/aqgnue3v4?key=8f8ac3b77dad5c993add49709d4e4ea5',
+  smartLink:'https://www.profitablecpmratenetwork.com/ac86w9xcd?key=76ee09aaa6787e25d440bc993d2dfdd5',
   earnCountry:{BD:.10,IN:.10,PK:.10,NG:.10,GH:.12,PH:.12,EG:.12,KE:.12},
   earnHi:.50, earnDef:.30,
   hiCC:['US','GB','CA','AU','DE','FR','NL','SE','NO','DK','CH','AT','SG','JP','NZ','IE'],
@@ -317,12 +317,58 @@ const CFG = {
   cpaKey:'YOUR_CPAGRIP_API_KEY',
   rssProxy:'https://api.allorigins.win/raw?url=',
   walls:[
-    {id:'w1',icon:'🔥',color:'#ef4444',link:''},
-    {id:'w2',icon:'📋',color:'#3b82f6',link:''},
-    {id:'w3',icon:'📱',color:'#8b5cf6',link:''},
-    {id:'w4',icon:'🎮',color:'#10b981',link:''},
-    {id:'w5',icon:'▶️',color:'#f59e0b',link:''},
-    {id:'w6',icon:'👑',color:'#ec4899',link:''},
+    // ── DEFAULT LINKS (code এ থাকলে Firebase call নেই) ──
+    // যেকোনো platform এর iframe URL, script code, বা rss বসান
+    // খালি রাখলে Admin Panel থেকে নেবে
+    {id:'w1',icon:'🔥',color:'#ef4444',
+      defaultName:'CPA Offers',       defaultDesc:'Complete CPA offers and earn',
+      defaultIframe:'',               // CPAGrip/Lootably/AdGem iframe URL এখানে
+      defaultScript:'',               // Script code এখানে
+      defaultRSS:'cpagrip',           // RSS: 'cpagrip','ogads','adgate','adscend','mylead','adworkm'
+      defaultMode:'rss',              // 'iframe','script','rss'
+    },
+    {id:'w2',icon:'📋',color:'#3b82f6',
+      defaultName:'Survey Rewards',   defaultDesc:'Share opinion and earn rewards',
+      defaultIframe:'',               // CPX Research iframe URL এখানে
+      defaultScript:'',               // CPX Script code এখানে
+      defaultRSS:'',
+      defaultMode:'iframe',
+    },
+    {id:'w3',icon:'📱',color:'#8b5cf6',
+      defaultName:'Mobile Offers',    defaultDesc:'App installs and downloads',
+      defaultIframe:'',               // OGAds/AdGem iframe এখানে
+      defaultScript:'',
+      defaultRSS:'ogads',
+      defaultMode:'rss',
+    },
+    {id:'w4',icon:'🎮',color:'#10b981',
+      defaultName:'Gaming Zone',      defaultDesc:'Games and achievements',
+      defaultIframe:'',               // Lootably/AdGate iframe এখানে
+      defaultScript:'',
+      defaultRSS:'adgate',
+      defaultMode:'rss',
+    },
+    {id:'w5',icon:'▶️',color:'#f59e0b',
+      defaultName:'Video Tasks',      defaultDesc:'Watch videos and earn',
+      defaultIframe:'',               // Adscend/BitLabs iframe এখানে
+      defaultScript:'',
+      defaultRSS:'adscend',
+      defaultMode:'rss',
+    },
+    {id:'w6',icon:'👑',color:'#ec4899',
+      defaultName:'Premium Offers',   defaultDesc:'High payout premium tasks',
+      defaultIframe:'',               // AdWork Media iframe এখানে
+      defaultScript:'',
+      defaultRSS:'adworkm',
+      defaultMode:'rss',
+    },
+    {id:'w7',icon:'💎',color:'#0891b2',
+      defaultName:'Special Offers',   defaultDesc:'Exclusive high reward tasks',
+      defaultIframe:'',               // MyLead/Theorem Reach iframe এখানে
+      defaultScript:'',
+      defaultRSS:'mylead',
+      defaultMode:'rss',
+    },
   ],
   methods:['bkash','nagad','paypal','visa','payoneer','usdt'],
   methodEmoji:{bkash:'🇧🇩 bKash',nagad:'💚 Nagad',paypal:'💳 PayPal',visa:'🔵 Visa Card',payoneer:'🏦 Payoneer',usdt:'💎 USDT'},
@@ -392,6 +438,8 @@ const LANGS={
     noWarn:'⚠️ Requirements not met for withdrawal. You need at least $5 and 5 active referrals.',
     withdrawMethod:'Select Payment Method',withdrawAcc:'Account / Number / Email',withdrawAmt:'Amount (USD)',
     history:'History',noHistory:'No history yet',
+    wSuccess:'Withdrawal request successful!',wPending:'Payment will be processed within 7-10 business days.',
+    refCode:'Your Referral Code',refShare:'Share this code with your friends',
   }},
   bn:{n:'বাংলা',f:'🇧🇩',d:'ltr',t:{
     appName:'EarnZone Pro',appTag:'বিশ্বজুড়ে আসল টাকা উপার্জন করুন',
@@ -438,6 +486,8 @@ const LANGS={
     noWarn:'⚠️ উত্তোলনের শর্ত পূরণ হয়নি। সর্বনিম্ন $৫ এবং ৫ সক্রিয় রেফারেল দরকার।',
     withdrawMethod:'পেমেন্ট পদ্ধতি নির্বাচন করুন',withdrawAcc:'অ্যাকাউন্ট / নম্বর / ইমেইল',withdrawAmt:'পরিমাণ (USD)',
     history:'ইতিহাস',noHistory:'এখনো কোন ইতিহাস নেই',
+    wSuccess:'উত্তোলন সফল হয়েছে!',wPending:'পেমেন্ট ৭-১০ কার্যদিবসের মধ্যে প্রক্রিয়া হবে।',
+    refCode:'আপনার রেফারেল কোড',refShare:'এই কোড বন্ধুদের সাথে শেয়ার করুন',
   }},
   ur:{n:'اردو',f:'🇵🇰',d:'rtl',t:{
     appName:'EarnZone Pro',appTag:'دنیا بھر میں اصل پیسے کمائیں',
@@ -476,6 +526,8 @@ const LANGS={
     noWarn:'⚠️ شرائط پوری نہیں۔ $5 اور 5 ریفرل چاہیے۔',
     withdrawMethod:'ادائیگی کا طریقہ',withdrawAcc:'اکاؤنٹ / نمبر',withdrawAmt:'رقم (USD)',
     history:'تاریخ',noHistory:'ابھی کوئی تاریخ نہیں',
+    wSuccess:'نکاسی کامیاب!',wPending:'ادائیگی 7-10 کاری دنوں میں ہوگی۔',
+    refCode:'آپ کا ریفرل کوڈ',refShare:'یہ کوڈ دوستوں کے ساتھ شیئر کریں',
   }},
   hi:{n:'हिंदी',f:'🇮🇳',d:'ltr',t:{
     appName:'EarnZone Pro',appTag:'दुनिया भर में असली पैसे कमाएं',
@@ -514,6 +566,8 @@ const LANGS={
     noWarn:'⚠️ शर्तें पूरी नहीं। $5 और 5 रेफरल चाहिए।',
     withdrawMethod:'भुगतान विधि',withdrawAcc:'खाता / नंबर',withdrawAmt:'राशि (USD)',
     history:'इतिहास',noHistory:'अभी कोई इतिहास नहीं',
+    wSuccess:'निकासी सफल!',wPending:'भुगतान 7-10 कार्य दिवसों में होगा।',
+    refCode:'आपका रेफरल कोड',refShare:'इस कोड को दोस्तों के साथ शेयर करें',
   }},
   ar:{n:'العربية',f:'🇸🇦',d:'rtl',t:{
     appName:'EarnZone Pro',appTag:'اربح أموالاً حقيقية في جميع أنحاء العالم',
@@ -552,6 +606,8 @@ const LANGS={
     noWarn:'⚠️ الشروط غير مستوفاة. تحتاج $5 و5 إحالات.',
     withdrawMethod:'طريقة الدفع',withdrawAcc:'الحساب / الرقم',withdrawAmt:'المبلغ (USD)',
     history:'السجل',noHistory:'لا يوجد سجل بعد',
+    wSuccess:'تم طلب السحب بنجاح!',wPending:'ستتم معالجة الدفع خلال 7-10 أيام عمل.',
+    refCode:'رمز الإحالة الخاص بك',refShare:'شارك هذا الرمز مع الأصدقاء',
   }},
   fr:{n:'Français',f:'🇫🇷',d:'ltr',t:{
     appName:'EarnZone Pro',appTag:'Gagnez de l\'argent réel dans le monde entier',
@@ -590,6 +646,8 @@ const LANGS={
     noWarn:'⚠️ Conditions non remplies. $5 et 5 parrainages requis.',
     withdrawMethod:'Méthode de paiement',withdrawAcc:'Compte / Numéro',withdrawAmt:'Montant (USD)',
     history:'Historique',noHistory:'Pas d\'historique',
+    wSuccess:'Retrait réussi!',wPending:'Le paiement sera traité en 7-10 jours ouvrables.',
+    refCode:'Votre code de parrainage',refShare:'Partagez ce code avec vos amis',
   }},
   es:{n:'Español',f:'🇪🇸',d:'ltr',t:{
     appName:'EarnZone Pro',appTag:'Gana dinero real en todo el mundo',
@@ -628,10 +686,156 @@ const LANGS={
     noWarn:'⚠️ Requisitos no cumplidos. Necesitas $5 y 5 referidos.',
     withdrawMethod:'Método de pago',withdrawAcc:'Cuenta / Número',withdrawAmt:'Monto (USD)',
     history:'Historial',noHistory:'Sin historial aún',
+    wSuccess:'¡Solicitud de retiro exitosa!',wPending:'El pago se procesará en 7-10 días hábiles.',
+    refCode:'Tu Código de Referido',refShare:'Comparte este código con tus amigos',
+  }},
+  id:{n:'Indonesia',f:'🇮🇩',d:'ltr',t:{
+    appName:'EarnZone Pro',appTag:'Hasilkan uang nyata di seluruh dunia',
+    li:'Masuk',reg:'Daftar',lo:'Keluar',em:'Email',pw:'Kata Sandi',nm:'Nama Lengkap',cpw:'Konfirmasi',rc:'Kode Referral',
+    ha:'Sudah punya akun?',na:'Belum punya akun?',fp:'Lupa Kata Sandi?',rp:'Reset',fpn:'Reset hanya bisa sekali.',
+    ve:'Verifikasi Email',vd:'Klik link verifikasi di inbox Anda.',iv:'✓ Sudah Diverifikasi',re:'Kirim Ulang',veok:'Email terverifikasi!',
+    db:'Dashboard',wl:'Dompet',of:'Penawaran',pr:'Profil',ad:'Admin',
+    wa:'📺 Tonton Iklan',adTtl:'📺 Iklan Sedang Diputar',adSub:'Harap tunggu — tidak bisa dilewati',
+    adWrn:'🚫 Jangan tutup! Tunggu 10 detik.',adPLb:'detik tersisa',
+    ulk:'✅ Terbuka',lk:'🔒 Terkunci',ua:'Buka Akses',wd:'Tarik Dana',wt:'Cairkan Penghasilan',
+    bal:'Saldo ($)',te:'Total Penghasilan',rf:'Referral',aw:'Iklan',oc:'Penawaran',ed:'Hari Ini',
+    yrc:'Kode Referral Anda',scd:'Bagikan kode ini',cc2:'Salin Kode',cpd:'Disalin!',
+    mw:`Min. $5 + 5 referral aktif`,sw:'Kirim',sging:'Mengirim…',
+    ap:'Panel Admin',us:'Pengguna',ws:'Penarikan',ns:'Pengumuman',wls:'Link',ofs:'Penawaran',
+    apr:'Setujui',rej:'Tolak',bn:'Blokir',ub:'Buka Blokir',ma:'Jadikan Admin',ra:'Hapus Admin',
+    an:'Tulis pengumuman…',pn:'Posting',nun:'Tidak ada pengguna',nuw:'Tidak ada penarikan',nun2:'Tidak ada pengumuman',nuo:'Tidak ada penawaran',
+    pd:'Menunggu',apd:'Disetujui',rjd:'Ditolak',bnd:'Diblokir',act:'Aktif',ina:'Tidak Aktif',
+    rs:'Akun dibuat! Cek email.',mx:'Batas perangkat tercapai.',wp:'Email atau kata sandi salah.',
+    rnf:'Kode referral tidak ditemukan.',rs2:'Tidak bisa mereferral diri sendiri.',ws2:'Permintaan terkirim!',wf:'Persyaratan tidak terpenuhi.',
+    ms:'Bergabung sejak',cnt:'Negara',ln:'Bahasa',sv:'Simpan',cn:'Batal',
+    pb:'URL Postback',pbi:'Berikan URL ini ke jaringan CPA.',ols:'Link Penawaran',
+    wln:'Link',wls2:'Nama',wld:'Deskripsi',sec:'d',exp:'Kedaluwarsa',sett:'Pengaturan',
+    nt:'📢 Pengumuman baru! Tonton iklan.',vn:'Baca',uf:'Tonton 5 iklan.',wdone:'🎉 Terbuka 24 jam!',
+    adWall:'Tonton 5 iklan',adNote:'Iklan terhitung ✓',nln:'Tidak ada link.',ofl:'Buka Offerwall',
+    ofcomp:'Selesai',oflist:'Penawaran Selesai',mkOfComp:'Tandai Selesai',pbInfo:'Postback URL:',
+    langT:'Pilih Bahasa',setLang:'Bahasa diubah!',warnIframe:'Izinkan popup untuk situs ini.',
+    confirm:'Konfirmasi',close:'Tutup',back:'← Kembali',devLimit:'Batas perangkat.',banned:'Akun diblokir.',
+    refCount:'Referral Aktif',todayEarn:'Penghasilan Hari Ini',unlockDesc:'Tonton 5 iklan untuk akses 24 jam.',
+    adProgress:'Progres',of5:'penawaran selesai',noWarn:'⚠️ Butuh $5 dan 5 referral.',
+    withdrawMethod:'Metode Pembayaran',withdrawAcc:'Akun / Nomor',withdrawAmt:'Jumlah (USD)',
+    history:'Riwayat',noHistory:'Belum ada riwayat',
+    wSuccess:'Permintaan penarikan berhasil!',wPending:'Pembayaran akan diproses dalam 7-10 hari kerja.',
+    refCode:'Kode Referral Anda',refShare:'Bagikan kode ini kepada teman-teman Anda',
+  }},
+  tr:{n:'Türkçe',f:'🇹🇷',d:'ltr',t:{
+    appName:'EarnZone Pro',appTag:'Dünya genelinde gerçek para kazanın',
+    li:'Giriş Yap',reg:'Hesap Oluştur',lo:'Çıkış Yap',em:'E-posta',pw:'Şifre',nm:'Ad Soyad',cpw:'Onayla',rc:'Referans Kodu',
+    ha:'Hesabınız var mı?',na:'Yok mu?',fp:'Şifremi Unuttum?',rp:'Sıfırla',fpn:'Yalnızca bir kez sıfırlanabilir.',
+    ve:'E-posta Doğrula',vd:'Gelen kutunuzdaki linke tıklayın.',iv:'✓ Doğruladım',re:'Tekrar Gönder',veok:'Doğrulandı!',
+    db:'Panel',wl:'Cüzdan',of:'Teklifler',pr:'Profil',ad:'Yönetici',
+    wa:'📺 Reklam İzle',adTtl:'📺 Reklam Oynatılıyor',adSub:'Lütfen bekleyin — atlanamaz',
+    adWrn:'🚫 Kapatmayın! 10 saniye bekleyin.',adPLb:'saniye kaldı',
+    ulk:'✅ Açık',lk:'🔒 Kilitli',ua:'Erişimi Aç',wd:'Para Çek',wt:'Kazancı Çek',
+    bal:'Bakiye ($)',te:'Toplam',rf:'Referanslar',aw:'Reklamlar',oc:'Teklifler',ed:'Bugün',
+    yrc:'Referans Kodunuz',scd:'Kodu paylaşın',cc2:'Kopyala',cpd:'Kopyalandı!',
+    mw:`Min. $5 + 5 referans`,sw:'Gönder',sging:'Gönderiliyor…',
+    ap:'Yönetici',us:'Kullanıcılar',ws:'Çekimler',ns:'Duyurular',wls:'Linkler',ofs:'Teklifler',
+    apr:'Onayla',rej:'Reddet',bn:'Yasakla',ub:'Kaldır',ma:'Yönetici Yap',ra:'Kaldır',
+    an:'Duyuru yaz…',pn:'Yayınla',nun:'Kullanıcı yok',nuw:'Çekim yok',nun2:'Duyuru yok',nuo:'Teklif yok',
+    pd:'Beklemede',apd:'Onaylandı',rjd:'Reddedildi',bnd:'Yasaklı',act:'Aktif',ina:'Pasif',
+    rs:'Hesap oluşturuldu!',mx:'Cihaz sınırına ulaşıldı.',wp:'Yanlış bilgiler.',
+    rnf:'Referans kodu bulunamadı.',rs2:'Kendinizi referans gösteremezsiniz.',ws2:'İstek gönderildi!',wf:'Gereksinimler karşılanmadı.',
+    ms:'Üye',cnt:'Ülke',ln:'Dil',sv:'Kaydet',cn:'İptal',pb:'Postback URL',pbi:'CPA ağınıza verin.',ols:'Linkler',
+    wln:'Link',wls2:'Ad',wld:'Açıklama',sec:'s',exp:'Süresi Doluyor',sett:'Ayarlar',
+    nt:'📢 Yeni duyuru!',vn:'Oku',uf:'5 reklam izle.',wdone:'🎉 24 saat açık!',
+    adWall:'5 reklam izle',adNote:'Sayıldı ✓',nln:'Link yok.',ofl:'Aç',
+    ofcomp:'Tamamlandı',oflist:'Tamamlananlar',mkOfComp:'Tamamlandı',pbInfo:'Postback URL:',
+    langT:'Dil Seçin',setLang:'Değiştirildi!',warnIframe:'Açılır pencerelere izin verin.',
+    confirm:'Onayla',close:'Kapat',back:'← Geri',devLimit:'Cihaz sınırı.',banned:'Hesap yasaklandı.',
+    refCount:'Aktif Referanslar',todayEarn:'Bugünkü Kazanç',unlockDesc:'24 saat için 5 reklam izleyin.',
+    adProgress:'İlerleme',of5:'teklif',noWarn:'⚠️ $5 ve 5 referans gerekiyor.',
+    withdrawMethod:'Ödeme Yöntemi',withdrawAcc:'Hesap / No',withdrawAmt:'Miktar (USD)',
+    history:'Geçmiş',noHistory:'Geçmiş yok',
+    wSuccess:'Para çekme başarılı!',wPending:'Ödeme 7-10 iş günü içinde yapılacaktır.',
+    refCode:'Referans Kodunuz',refShare:'Bu kodu arkadaşlarınızla paylaşın',
+  }},
+  pt:{n:'Português',f:'🇧🇷',d:'ltr',t:{
+    appName:'EarnZone Pro',appTag:'Ganhe dinheiro real em todo o mundo',
+    li:'Entrar',reg:'Criar Conta',lo:'Sair',em:'E-mail',pw:'Senha',nm:'Nome Completo',cpw:'Confirmar',rc:'Código de Referência',
+    ha:'Já tem conta?',na:'Não tem?',fp:'Esqueceu a senha?',rp:'Redefinir',fpn:'Apenas uma redefinição permitida.',
+    ve:'Verificar E-mail',vd:'Clique no link na sua caixa de entrada.',iv:'✓ Já Verifiquei',re:'Reenviar',veok:'Verificado!',
+    db:'Painel',wl:'Carteira',of:'Ofertas',pr:'Perfil',ad:'Admin',
+    wa:'📺 Assistir Anúncio',adTtl:'📺 Anúncio em Execução',adSub:'Aguarde — não pode ser pulado',
+    adWrn:'🚫 Não feche! Fique por 10 segundos.',adPLb:'segundos restantes',
+    ulk:'✅ Desbloqueado',lk:'🔒 Bloqueado',ua:'Desbloquear',wd:'Sacar',wt:'Sacar Ganhos',
+    bal:'Saldo ($)',te:'Total',rf:'Referências',aw:'Anúncios',oc:'Ofertas',ed:'Hoje',
+    yrc:'Seu Código',scd:'Compartilhe o código',cc2:'Copiar',cpd:'Copiado!',
+    mw:`Mín. $5 + 5 referências`,sw:'Enviar',sging:'Enviando…',
+    ap:'Admin',us:'Usuários',ws:'Saques',ns:'Avisos',wls:'Links',ofs:'Ofertas',
+    apr:'Aprovar',rej:'Rejeitar',bn:'Banir',ub:'Desbanir',ma:'Admin',ra:'Remover',
+    an:'Escreva um aviso…',pn:'Publicar',nun:'Sem usuários',nuw:'Sem saques',nun2:'Sem avisos',nuo:'Sem ofertas',
+    pd:'Pendente',apd:'Aprovado',rjd:'Rejeitado',bnd:'Banido',act:'Ativo',ina:'Inativo',
+    rs:'Conta criada! Verifique seu e-mail.',mx:'Limite atingido.',wp:'E-mail ou senha incorretos.',
+    rnf:'Código não encontrado.',rs2:'Não pode se auto-referenciar.',ws2:'Pedido enviado!',wf:'Requisitos não atendidos.',
+    ms:'Membro desde',cnt:'País',ln:'Idioma',sv:'Salvar',cn:'Cancelar',pb:'Postback URL',pbi:'Forneça à sua rede CPA.',ols:'Links',
+    wln:'Link',wls2:'Nome',wld:'Descrição',sec:'s',exp:'Expira',sett:'Configurações',
+    nt:'📢 Novo aviso!',vn:'Ler',uf:'Assista 5 anúncios.',wdone:'🎉 24h desbloqueado!',
+    adWall:'5 anúncios',adNote:'Contado ✓',nln:'Sem link.',ofl:'Abrir',
+    ofcomp:'Concluída',oflist:'Concluídas',mkOfComp:'Marcar',pbInfo:'Postback URL:',
+    langT:'Escolher Idioma',setLang:'Idioma alterado!',warnIframe:'Permita popups para este site.',
+    confirm:'Confirmar',close:'Fechar',back:'← Voltar',devLimit:'Limite atingido.',banned:'Conta banida.',
+    refCount:'Referências Ativas',todayEarn:'Ganho Hoje',unlockDesc:'5 anúncios para 24h de acesso.',
+    adProgress:'Progresso',of5:'ofertas',noWarn:'⚠️ Precisa de $5 e 5 referências.',
+    withdrawMethod:'Método',withdrawAcc:'Conta / Número',withdrawAmt:'Valor (USD)',
+    history:'Histórico',noHistory:'Sem histórico',
+    wSuccess:'Pedido de saque realizado!',wPending:'O pagamento será processado em 7-10 dias úteis.',
+    refCode:'Seu Código de Referência',refShare:'Compartilhe este código com amigos',
   }},
 };
 
-// ─── T() — Translation helper ─────────────────────────
+// ─── VERSION-BASED CACHE SYSTEM ─────────────────────
+// Admin save করলে version বাড়ে → user এর cache invalid হয়
+// No change → localStorage থেকে নেয় → 0 Firebase call
+const CACHE={
+  _key:(id)=>`ez_wall_${id}`,
+  _vkey:(id)=>`ez_wall_v_${id}`,
+
+  // localStorage থেকে wall data নাও
+  getLocal(wallId){
+    try{
+      const d=localStorage.getItem(this._key(wallId));
+      return d?JSON.parse(d):null;
+    }catch(e){ return null; }
+  },
+  // localStorage এ wall data রাখো
+  setLocal(wallId,data,version){
+    try{
+      localStorage.setItem(this._key(wallId),JSON.stringify(data));
+      localStorage.setItem(this._vkey(wallId),String(version));
+    }catch(e){}
+  },
+  // localStorage এর version
+  getLocalVersion(wallId){
+    return localStorage.getItem(this._vkey(wallId))||'0';
+  },
+  // Cache clear (admin save করলে)
+  clear(wallId){
+    localStorage.removeItem(this._key(wallId));
+    localStorage.removeItem(this._vkey(wallId));
+  },
+  // Smart get: version check করে, same হলে local, আলাদা হলে Firebase
+  async smartGet(wallId){
+    const localVer=this.getLocalVersion(wallId);
+    // Firebase থেকে শুধু version field আনো (tiny call)
+    const verSnap=await fDB.ref(`walls/${wallId}/version`).once('value');
+    const remoteVer=String(verSnap.val()||'0');
+    if(localVer===remoteVer && localVer!=='0'){
+      // Version same → localStorage থেকে নাও (0 full call)
+      const local=this.getLocal(wallId);
+      if(local) return local;
+    }
+    // Version আলাদা বা cache নেই → full Firebase call
+    const snap=await fDB.ref(`walls/${wallId}`).once('value');
+    const data=snap.val()||{};
+    this.setLocal(wallId,data,remoteVer||'1');
+    return data;
+  }
+};
 const T = k => (LANGS[S.lang]?.t[k] || LANGS.en.t[k] || k);
 
 // ─── UTILS ────────────────────────────────────────────
@@ -999,11 +1203,7 @@ function showNoticeFinal(notice){
 }
 
 window.EZ={
-  closeNM: function() {
-  $('#nm').style.display = 'none';
-  S.currentNotice = null;
-  render();
-},
+  closeNM:(){ $('#nm').style.display='none'; S.currentNotice=null; render(); },
   closeLM:()=>{ $('#lm').style.display='none'; render(); },
   openLM:()=>{
     buildLangModal();
@@ -1058,15 +1258,26 @@ async function loadUserData(uid){
 async function getWallData(){
   const snap=await fDB.ref('walls').once('value');
   const saved=snap.val()||{};
-  // Merge with default config
   const walls={};
   CFG.walls.forEach((w,i)=>{
+    const fb=saved[w.id]||{};
+    // Code এ default আছে? → সেটা use করো (Firebase call বাঁচে)
+    // Admin Panel এ বসিয়েছে? → সেটা override করবে
+    const iframe = fb.link||w.defaultIframe||'';
+    const script = fb.scriptCode||w.defaultScript||'';
+    const rssPlat= fb.rssPlatform||w.defaultRSS||'cpagrip';
+    const mode   = fb.embedMode||w.defaultMode||'iframe';
     walls[w.id]={
       id:w.id, icon:w.icon, color:w.color,
-      name:saved[w.id]?.name||`Offerwall ${i+1}`,
-      desc:saved[w.id]?.desc||'Complete offers and earn rewards',
-      link:saved[w.id]?.link||'',
-      active:saved[w.id]?.active!==false,
+      name:fb.name||w.defaultName||`Offerwall ${i+1}`,
+      desc:fb.desc||w.defaultDesc||'Complete offers and earn',
+      link:iframe, scriptCode:script,
+      rssPlatform:rssPlat, embedMode:mode,
+      useRSS:fb.useRSS||(mode==='rss'),
+      active:fb.active!==false,
+      version:fb.version||'0',
+      // Flag: code default kullanılıyor mu?
+      usingDefault:!fb.embedMode,
     };
   });
   S.wallData=walls;
@@ -1090,7 +1301,7 @@ function msToHM(ms){
 
 // POSTBACK URL for user
 function getPostbackUrl(uid,wallId){
-  return `https://earn-zone-997fb-default-rtdb.firebaseio.com/postbacks/${uid}_${wallId}.json`;
+  return `https://earnzip-a8766-default-rtdb.firebaseio.com/postbacks/${uid}_${wallId}.json`;
 }
 // Postback note to show users
 function getPostbackNote(uid,wallId){
@@ -1210,8 +1421,24 @@ async function submitWithdraw(method,account,amount){
   });
   // Deduct from user
   await fDB.ref(`users/${S.user.uid}/usdEarned`).transaction(v=>Math.max(0,(v||0)-usd));
-  toast(T('ws2'),'s');
-  S.page='wallet'; render();
+  // Show success message with payment timeline
+  const app=document.getElementById('app');
+  const uid2=S.user?.uid||'';
+  document.getElementById('app').innerHTML=`
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f0f7ff">
+    <div style="background:#fff;border:2px solid #86efac;border-radius:22px;padding:32px 24px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(5,150,105,.15);animation:fadeUp .32s ease">
+      <div style="font-size:64px;margin-bottom:16px">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px">${T('wSuccess')||'Withdrawal Successful!'}</div>
+      <div style="font-size:14px;color:#64748b;line-height:1.7;margin-bottom:20px">${T('wPending')||'Payment will be processed within 7-10 business days.'}</div>
+      <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:14px;margin-bottom:20px">
+        <div style="font-size:12px;color:#15803d;font-weight:600">📋 Request Details</div>
+        <div style="font-size:13px;color:#475569;margin-top:6px">Method: <strong>${method.toUpperCase()}</strong></div>
+        <div style="font-size:13px;color:#475569">Account: <strong>${account}</strong></div>
+        <div style="font-size:13px;color:#15803d;font-weight:700">Amount: <strong>$${usd.toFixed(2)}</strong></div>
+      </div>
+      <button onclick="S.page='wallet';render()" style="width:100%;background:linear-gradient(135deg,#2563eb,#059669);color:#fff;border:none;border-radius:11px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">← Back to Wallet</button>
+    </div>
+  </div>`;
 }
 
 // ─── OFFER COMPLETE (postback / manual) ───────────────
@@ -1497,7 +1724,7 @@ function buildHome(){
     <div class="sc"><div class="sc-i">💵</div><div class="sc-v cy">${fmt$(todayEarn)}</div><div class="sc-l">${T('todayEarn')}</div></div>
   </div>
   <div class="sl">${T('of')}</div>
-  ${CFG.walls.slice(0,3).map(w=>`<div class="wc" data-goto-wall="${w.id}">
+  ${CFG.walls.slice(0,4).map(w=>`<div class="wc" data-goto-wall="${w.id}">
     <div class="wc-ic" style="background:${w.color}22;border:1px solid ${w.color}44">${w.icon}</div>
     <div class="wc-b"><div class="wc-t">${S.wallData[w.id]?.name||'Offerwall'}</div><div class="wc-d">${S.wallData[w.id]?.desc||''}</div></div>
     <div class="wc-r"><span style="color:${w.color};font-size:18px">›</span></div>
@@ -1511,10 +1738,18 @@ function buildWallet(){
   const ud=S.userData||{};
   const methods=CFG.methods;
   return `<div class="ph"><div class="pt">${T('wt')}</div><div class="ps">${T('mw')}</div></div>
-  <div class="card" style="text-align:center;background:linear-gradient(135deg,#180f3c,#0e1e3c);border-color:rgba(124,58,237,.22);margin-bottom:14px">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,#1e40af,#065f46);border-color:rgba(37,99,235,.3);margin-bottom:14px">
     <div style="font-size:13px;color:#64748b;margin-bottom:6px">${T('bal')}</div>
     <div class="sf" style="font-size:40px;font-weight:800;color:#fbbf24">${fmt$(ud.usdEarned||0)}</div>
-    <div style="font-size:12px;color:#475569;margin-top:4px">Referrals: ${ud.activeReferrals||0}/${CFG.minRefs} needed</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">Referrals: ${ud.activeReferrals||0}/${CFG.minRefs} needed</div>
+    <div style="margin-top:10px;display:flex;gap:8px;justify-content:center">
+      <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.8)">
+        ${S.payoutMode==='cpa'?'💡 CPA Rate Active':'✏️ Custom Rate Active'}
+      </div>
+      <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.8)">
+        📺 Ads: ${ud.adsWatched||0}
+      </div>
+    </div>
   </div>
   <div class="card">
     <div class="card-hd">💳 ${T('withdrawMethod')}</div>
@@ -1548,7 +1783,15 @@ async function loadWithdrawHistory(){
 function buildOffers(){
   const walls=Object.values(S.wallData);
   if(!walls.length) return `<div class="ph"><div class="pt">${T('of')}</div></div><div class="empty"><div class="ein">⏳</div><div class="etx">Loading…</div></div>`;
-  return `<div class="ph"><div class="pt">${T('of')}</div><div class="ps">Earn ${fmt$(S.countryEarn)} per completed offer</div></div>
+  return `<div class="ph"><div class="pt">${T('of')}</div>
+  <div class="ps">Earn ${fmt$(S.countryEarn)}/offer · ${S.country||'Detecting…'}</div></div>
+  <div style="background:linear-gradient(135deg,#1e40af,#065f46);border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:600;text-transform:uppercase">Your Earning Rate</div>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff">${fmt$(S.countryEarn)}<span style="font-size:12px;font-weight:400;color:rgba(255,255,255,.7)"> per offer</span></div>
+    </div>
+    <div style="font-size:36px">💰</div>
+  </div>
   ${walls.map(w=>`<div class="wc" data-goto-wall="${w.id}">
     <div class="wc-ic" style="background:${w.color}22;border:1px solid ${w.color}44">${w.icon}</div>
     <div class="wc-b">
@@ -1743,13 +1986,23 @@ function openRSSOffer(encodedLink, wallId){
   // After opening show a note
   toast('Complete the offer then come back here!','i',4000);
 }
-
+}
 
 // ─── PROFILE PAGE ─────────────────────────────────────
 function buildProfile(){
   const ud=S.userData||{};
   const refLink=`${location.origin}${location.pathname}?ref=${ud.refCode||''}`;
   return `<div class="ph"><div class="pt">${T('pr')}</div><div class="ps">${T('ms')} ${fmtD(ud.createdAt)}</div></div>
+  <!-- REFERRAL CODE — prominently shown -->
+  <div style="background:linear-gradient(135deg,#1e40af,#065f46);border-radius:20px;padding:20px;margin-bottom:14px;text-align:center;box-shadow:0 8px 24px rgba(37,99,235,.2)">
+    <div style="font-size:12px;color:rgba(255,255,255,.7);font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px">🎁 ${T('refCode')||'Your Referral Code'}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff;letter-spacing:.18em;margin-bottom:8px">${ud.refCode||'——'}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:14px">${T('refShare')||'Share this code with your friends'}</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button onclick="copyText('${ud.refCode||''}')" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:8px 14px;cursor:pointer;color:#fff;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">📋 ${T('cc2')}</button>
+      <button onclick="copyText('${refLink}')" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:8px 14px;cursor:pointer;color:#fff;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">🔗 Copy Link</button>
+    </div>
+  </div>
   <div class="card" style="text-align:center;margin-bottom:14px">
     <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 12px;box-shadow:0 0 30px rgba(124,58,237,.3)">${(ud.name||ud.email||'?')[0].toUpperCase()}</div>
     <div class="sf" style="font-size:17px;font-weight:700">${ud.name||'—'}</div>
@@ -1882,8 +2135,7 @@ async function loadAdminUsers(c){
       toast(!cur?'RSS Feed enabled!':'RSS Feed disabled','s');
     };
   });
-}
-   async function loadWithdrawals(c){
+}(c){
   const snap=await fDB.ref('withdrawals').orderByChild('status').equalTo('pending').once('value');
   const snap2=await fDB.ref('withdrawals').orderByChild('createdAt').limitToLast(20).once('value');
   const data=snap2.val()||{};
@@ -2037,8 +2289,10 @@ function loadAdminWalls(c){
       if(rSec&&rSec.style.display!=='none') mode='rss';
       const rssPlatform=rpEl?.value||'cpagrip';
       btn.disabled=true; btn.textContent='⏳';
-      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk,scriptCode:sc,embedMode:mode,rssPlatform});
-      if(S.wallData[id]){S.wallData[id].name=nm;S.wallData[id].desc=ds;S.wallData[id].link=lk;S.wallData[id].scriptCode=sc;S.wallData[id].embedMode=mode;S.wallData[id].rssPlatform=rssPlatform;}
+      const version=Date.now().toString(); // নতুন version = timestamp
+      await fDB.ref(`walls/${id}`).update({name:nm,desc:ds,link:lk,scriptCode:sc,embedMode:mode,rssPlatform,version});
+      if(S.wallData[id]){S.wallData[id].name=nm;S.wallData[id].desc=ds;S.wallData[id].link=lk;S.wallData[id].scriptCode=sc;S.wallData[id].embedMode=mode;S.wallData[id].rssPlatform=rssPlatform;S.wallData[id].version=version;}
+      CACHE.clear(id); // local cache clear → পরের visit এ fresh আনবে
       toast('Saved ✓','s'); btn.disabled=false; btn.textContent='💾 Save';
     };
   });
@@ -2118,39 +2372,67 @@ function attachAppEvents(){
   if(hn) hn.querySelector('button').onclick=()=>{
     if(S.noticeQueue.length) viewNotice(S.noticeQueue[0]);
   };
-  // Wall view — RSS load + Script inject
+  // Wall view — Version-based cache (0 Firebase call if no admin change)
   if(S.page==='wallview'){
     const wallId=S.unlockWallId;
-    const w=S.wallData[wallId]||{};
-    const embedMode=w.embedMode||'iframe';
-    // Script Tag injection
-    if(embedMode==='script' && w.scriptCode){
-      const zone=document.getElementById('scriptInjectZone');
-      if(zone){
-        const uid=S.user?.uid||'';
-        const injected=w.scriptCode.replace(/\{uid\}/g, uid);
-        const wrapper=document.createElement('div');
-        wrapper.innerHTML=injected;
-        // Execute scripts inside
-        wrapper.querySelectorAll('script').forEach(oldScript=>{
-          const newScript=document.createElement('script');
-          if(oldScript.src) newScript.src=oldScript.src;
-          else newScript.textContent=oldScript.textContent;
-          document.body.appendChild(newScript);
-        });
-        zone.appendChild(wrapper);
+    CACHE.smartGet(wallId).then(freshData=>{
+      // Merge fresh data into S.wallData
+      if(S.wallData[wallId]){
+        Object.assign(S.wallData[wallId], freshData);
+      } else {
+        S.wallData[wallId]=freshData;
       }
-    }
-    if(w.useRSS || embedMode==='rss'){
-      fetchRSSOffers(wallId).then(()=>renderRSSOffers(wallId));
-    }
-    const rfBtn=document.getElementById('rssRefresh');
-    if(rfBtn) rfBtn.onclick=async()=>{
-      rfBtn.disabled=true; rfBtn.textContent='⏳ Loading…';
-      await fetchRSSOffers(wallId);
-      renderRSSOffers(wallId);
-      rfBtn.disabled=false; rfBtn.textContent='🔄 Refresh';
-    };
+      const w=S.wallData[wallId]||{};
+      const embedMode=w.embedMode||'iframe';
+      // Script Tag injection
+      if(embedMode==='script' && w.scriptCode){
+        const zone=document.getElementById('scriptInjectZone');
+        if(zone){
+          const uid=S.user?.uid||'';
+          document.querySelectorAll('script[data-cpx-injected]').forEach(s=>s.remove());
+          document.querySelectorAll('div[data-cpx-injected]').forEach(d=>d.remove());
+          if(window.config) delete window.config;
+          if(window.cpx_research) delete window.cpx_research;
+          const injected=w.scriptCode.replace(/\{uid\}/g,uid);
+          const wrapper=document.createElement('div');
+          wrapper.innerHTML=injected;
+          wrapper.querySelectorAll(':not(script)').forEach(node=>{
+            const clone=node.cloneNode(true);
+            clone.setAttribute('data-cpx-injected','1');
+            zone.appendChild(clone);
+          });
+          const scripts=[...wrapper.querySelectorAll('script')];
+          const execNext=(i)=>{
+            if(i>=scripts.length) return;
+            const oldS=scripts[i];
+            const newS=document.createElement('script');
+            newS.setAttribute('data-cpx-injected','1');
+            if(oldS.src){
+              newS.src=oldS.src+'?t='+Date.now(); // cache bust
+              newS.onload=()=>execNext(i+1);
+              newS.onerror=()=>execNext(i+1);
+            } else {
+              newS.textContent=oldS.textContent;
+            }
+            document.body.appendChild(newS);
+            if(!oldS.src) execNext(i+1);
+          };
+          execNext(0);
+        }
+      }
+      // RSS
+      if(w.useRSS || embedMode==='rss'){
+        fetchRSSOffers(wallId).then(()=>renderRSSOffers(wallId));
+      }
+      // Refresh button
+      const rfBtn=document.getElementById('rssRefresh');
+      if(rfBtn) rfBtn.onclick=async()=>{
+        rfBtn.disabled=true; rfBtn.textContent='⏳ Loading…';
+        await fetchRSSOffers(wallId);
+        renderRSSOffers(wallId);
+        rfBtn.disabled=false; rfBtn.textContent='🔄 Refresh';
+      };
+    });
   }
   // Wallet
   if(S.page==='wallet'){
@@ -2467,19 +2749,13 @@ console.log('%c◆ EarnZone Pro v3 — RSS + Custom Payout + Postback', 'color:#
 <!-- Adsterra Banner Ad (place in site footer or sidebar) -->
 <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:10;display:none" id="banAd">
   <script>
-  atOptions = {
-    'key' : '7ef7430425eb8049f5ca78a4fdb79c59',
-    'format' : 'iframe',
-    'height' : 300,
-    'width' : 160,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/7ef7430425eb8049f5ca78a4fdb79c59/invoke.js"></script>
+    atOptions={'key':'7481a295bbedc15aca65147556093790','format':'iframe','height':50,'width':320,'params':{}};
+  </script>
+  <script src="https://www.highperformanceformat.com/7481a295bbedc15aca65147556093790/invoke.js"></script>
 </div>
 
 <!-- Adsterra Native Banner -->
-<script async="async" data-cfasync="false" src="https://pl29327203.profitablecpmratenetwork.com/71a6c6e0d4a4a4c387b3be64cbb9dc23/invoke.js"></script>
-<div id="container-71a6c6e0d4a4a4c387b3be64cbb9dc23"></div>
+<script async data-cfasync="false" src="https://pl29181399.profitablecpmratenetwork.com/57756532467a1fc7800d1e652f9c78a3/invoke.js"></script>
+<div id="container-57756532467a1fc7800d1e652f9c78a3" style="display:none"></div>
 </body>
 </html>
