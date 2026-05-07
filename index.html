@@ -327,16 +327,17 @@ const CFG = {
     // ════════════════════════════════════════════════════════
 
     { id:'w1', icon:'🔥', color:'#ef4444',
-  // ── Offerwall 1 Settings ──
-  defaultName: 'CPA Offers',
-  defaultDesc: 'Complete CPA offers and earn rewards',
-  embedMode:   'iframe', 
-  defaultIframe: 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id={uid}',
-  // Script-er moddhe window.open system:
-  defaultScript: ``,
-  defaultRSS:  'cpagrip',
-},
-
+      // ── Offerwall 1 Settings ──
+      defaultName: 'CPA Offers',
+      defaultDesc: 'Complete CPA offers and earn rewards',
+      embedMode:   'iframe',            // ← 'iframe' | 'script' | 'rss'
+      // iFrame URL (embedMode='iframe' হলে এটা কাজ করবে):
+      defaultIframe: 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id={uid}',             // ← https://your-offerwall.com?user={uid}
+      // Script code (embedMode='script' হলে এটা কাজ করবে):
+      defaultScript: '',            
+      // RSS platform (embedMode='rss' হলে এটা কাজ করবে):
+      defaultRSS:  'cpagrip',        // ← cpagrip | ogads | adgate | adscend | mylead | adworkm
+    },
 
     { id:'w2', icon:'📋', color:'#3b82f6',
       // ── Offerwall 2 Settings ──
@@ -1124,44 +1125,183 @@ const RSS_PLATFORMS={
 };
 
 async function fetchRSSOffers(wallId){
-  S.rssLoading=true; S.rssOffers=[]; S.rssWallId=wallId;
-  const uid=S.user?.uid||'';
-  const cc=S.country||'';
-  // Get wall's platform setting
-  const wallSnap=await fDB.ref(`walls/${wallId}`).once('value');
-  const wallCfg=wallSnap.val()||{};
-  const platformId=wallCfg.rssPlatform||'cpagrip';
-  const platform=RSS_PLATFORMS[platformId];
-  if(!platform){
-    S.rssLoading=false;
-    S.rssOffers=[{error:true,msg:'Unknown platform. Set in Admin → Wall Links.'}];
-    return;
-  }
-  // Load credentials from Firebase
-  const credSnap=await fDB.ref(`settings/rss/${platformId}`).once('value');
-  const creds=credSnap.val()||{};
-  if(!creds.userId && !creds.key){
-    S.rssLoading=false;
-    S.rssOffers=[{error:true,msg:`${platform.name} credentials not set. Go to Admin → Settings → RSS Credentials.`}];
-    return;
-  }
-  const rssUrl=platform.buildUrl(creds,cc,uid);
-  const proxyUrl=CFG.rssProxy+encodeURIComponent(rssUrl);
-  try{
-    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(9000)});
-    const txt=await res.text();
-    const parser=new DOMParser();
-    const xml=parser.parseFromString(txt,'text/xml');
-    const parsed=platform.parse(xml,cc);
-    if(!parsed.length){
-      S.rssOffers=[{empty:true,platform:platform.name}];
-    } else {
-      S.rssOffers=parsed.slice(0,30);
+
+  S.rssLoading = true;
+  S.rssOffers = [];
+  S.rssWallId = wallId;
+
+  const uid = S.user?.uid || '';
+  const cc = S.country || '';
+
+  // ===== LOCAL WALL CONFIG =====
+  const WALLS = {
+
+    w1:{ rssPlatform:'cpagrip' },
+
+    w2:{ rssPlatform:'cpx' },
+
+    w3:{ rssPlatform:'offertoro' },
+
+    w4:{ rssPlatform:'ayet' },
+
+    w5:{ rssPlatform:'adscend' },
+
+    w6:{ rssPlatform:'ogads' }
+
+  };
+
+  // ===== LOCAL CREDENTIALS =====
+  const RSS_CREDS = {
+
+    cpagrip:{
+      userId:'YOUR_CPAGRIP_ID',
+      key:'YOUR_CPAGRIP_KEY'
+    },
+
+    cpx:{
+      userId:'YOUR_CPX_ID',
+      key:'YOUR_CPX_KEY'
+    },
+
+    offertoro:{
+      userId:'YOUR_TORO_ID',
+      key:'YOUR_TORO_KEY'
+    },
+
+    ayet:{
+      userId:'YOUR_AYET_ID',
+      key:'YOUR_AYET_KEY'
+    },
+
+    adscend:{
+      userId:'YOUR_ADSCEND_ID',
+      key:'YOUR_ADSCEND_KEY'
+    },
+
+    ogads:{
+      userId:'YOUR_OGADS_ID',
+      key:'YOUR_OGADS_KEY'
     }
-  }catch(e){
-    S.rssOffers=[{error:true,msg:`Failed to load ${platform.name} offers. Check credentials.`}];
+
+  };
+
+  // ===== GET WALL =====
+  const wallCfg =
+    WALLS[wallId] ||
+    WALLS.w1;
+
+  const platformId =
+    wallCfg.rssPlatform;
+
+  // ===== GET PLATFORM =====
+  const platform =
+    RSS_PLATFORMS[platformId];
+
+  if(!platform){
+
+    S.rssLoading = false;
+
+    S.rssOffers = [
+      {
+        error:true,
+        msg:`Platform "${platformId}" not found`
+      }
+    ];
+
+    return;
   }
-  S.rssLoading=false;
+
+  // ===== GET CREDS =====
+  const creds =
+    RSS_CREDS[platformId] || {};
+
+  // FIXED CHECK
+  if(!creds.userId || !creds.key){
+
+    S.rssLoading = false;
+
+    S.rssOffers = [
+      {
+        error:true,
+        msg:`${platform.name} credentials missing`
+      }
+    ];
+
+    return;
+  }
+
+  // ===== BUILD URL =====
+  const rssUrl =
+    platform.buildUrl(
+      creds,
+      cc,
+      uid
+    );
+
+  // ===== PROXY =====
+  const proxyUrl =
+    CFG.rssProxy +
+    encodeURIComponent(rssUrl);
+
+  try{
+
+    const res =
+      await fetch(
+        proxyUrl,
+        {
+          signal:
+            AbortSignal.timeout(9000)
+        }
+      );
+
+    const txt =
+      await res.text();
+
+    const parser =
+      new DOMParser();
+
+    const xml =
+      parser.parseFromString(
+        txt,
+        'text/xml'
+      );
+
+    const parsed =
+      platform.parse(
+        xml,
+        cc
+      );
+
+    if(!parsed.length){
+
+      S.rssOffers = [
+        {
+          empty:true,
+          platform:platform.name
+        }
+      ];
+
+    }else{
+
+      S.rssOffers =
+        parsed.slice(0,30);
+
+    }
+
+  }catch(e){
+
+    console.error(e);
+
+    S.rssOffers = [
+      {
+        error:true,
+        msg:`Failed loading ${platform.name}`
+      }
+    ];
+
+  }
+
+  S.rssLoading = false;
 }
 
 // Postback listener — CPA network এ offer complete হলে এখানে আসে
