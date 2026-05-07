@@ -333,24 +333,7 @@ const CFG = {
   embedMode:   'script', 
   defaultIframe: '',
   // Script-er moddhe window.open system:
-  defaultScript: `
-    const uid = S.user.uid;
-
-const offerUrl = 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id=' + uid;
-
-const embedArea = document.getElementById('wallEmbed');
-if(embedArea) {
-  embedArea.innerHTML = `
-    <div style="padding:40px; text-align:center;">
-      <h2 style="color:#2563eb;">Open Offer Wall</h2>
-      <button onclick="window.open('${offerUrl}','_blank')" 
-        style="margin-top:20px; padding:10px 20px; background:#2563eb; color:#fff; border:none; border-radius:8px;">
-        Start Earning
-      </button>
-    </div>
-  `;
-   }
-  `,
+  defaultScript: ``,
   defaultRSS:  'cpagrip',
 },
 
