@@ -1668,7 +1668,7 @@ async function checkActiveReferrals(){
 
 // ─── MAIN RENDER ──────────────────────────────────────
 function render(){
-  if(!S.user){
+  if(!S.user || S.page==='verify'){
     renderAuth();
   } else {
     renderApp();
