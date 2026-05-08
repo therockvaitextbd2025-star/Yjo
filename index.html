@@ -1646,12 +1646,12 @@ function activateNoticeDot(notices){
   S.noticeQueue=notices;
 }
 
-function updateNavBar(){
-  const balEl=$('.nav-bal');
-  if(balEl && S.userData) balEl.textContent=fmt$(S.userData.usdEarned||0);
+//function updateNavBar(){
+//  const balEl=$('.nav-bal');
+  //if(balEl && S.userData) balEl.textContent=fmt$(S.userData.usdEarned||0);
   // Update active referrals count (users who have watched at least 1 ad)
-  checkActiveReferrals();
-}
+ // checkActiveReferrals();
+//}
 
 async function checkActiveReferrals(){
   if(!S.userData) return;
