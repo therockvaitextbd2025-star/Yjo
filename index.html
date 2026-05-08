@@ -2251,7 +2251,7 @@ function buildAdmin(){
 async function loadAdminContent(){
   const c=$('#adminContent'); if(!c) return;
   if(S.adminTab==='users') await loadAdminUsers(c);
-  else if(S.adminTab==='ws') await loadAdminWithdrawals(c);
+  else if(S.adminTab==='ws') await loadWithdrawals(c);
   else if(S.adminTab==='ns') loadAdminNotices(c);
   else if(S.adminTab==='wls') loadAdminWalls(c);
   else if(S.adminTab==='ofs') await loadAdminOffers(c);
