@@ -331,11 +331,11 @@ const CFG = {
       // ── Offerwall 1 Settings ──
       defaultName: 'CPA Offers',
       defaultDesc: 'Complete CPA offers and earn rewards',
-      embedMode:   'iframe',            // ← 'iframe' | 'script' | 'rss'
+      embedMode:   'script',            // ← 'iframe' | 'script' | 'rss'
       // iFrame URL (embedMode='iframe' হলে এটা কাজ করবে):
       defaultIframe: 'https://www.cpagrip.com/show.php?l=0&u=868512&id=72199&tracking_id={uid}',             // ← https://your-offerwall.com?user={uid}
       // Script code (embedMode='script' হলে এটা কাজ করবে):
-      defaultScript: '',            
+      defaultScript: '<script type="text/javascript" src="https://singingfiles.com/script_include.php?id=1875263&s1={uid}"><\/script>',            
       // RSS platform (embedMode='rss' হলে এটা কাজ করবে):
       defaultRSS:  'cpagrip',        // ← cpagrip | ogads | adgate | adscend | mylead | adworkm
     },
