@@ -306,7 +306,8 @@ fAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 // ─── CONFIG ───────────────────────────────────────────
 const CFG = {
-  adSec:8, adsPerWall:4, unlock24h:86400000, adGapMs:5000,
+  //adSec:8, adsPerWall:4, unlock24h:86400000, adGapMs:5000,
+  adSec:8, adsPerWall:4, unlock24h:86400000, adGapMs:5000, refBonus:0.10,
   minUSD:5, minRefs:5, maxDevAcc:2,
   smartLink:'https://www.profitablecpmratenetwork.com/umex8g0z7?key=60dc4ecdfe325f516355a547ff213570',
   earnCountry:{BD:.10,IN:.10,PK:.10,NG:.10,GH:.12,PH:.12,EG:.12,KE:.12},
@@ -1506,7 +1507,9 @@ async function doRegister(name,email,pw,refCode){
     await fDB.ref(`users/${uid}`).set(userData);
     // Add referral
     if(refByUid){
-      await fDB.ref(`users/${refByUid}/pendingReferrals/${uid}`).set(Date.now());
+      //await fDB.ref(`users/${refByUid}/pendingReferrals/${uid}`).set(Date.now());
+      await fDB.ref(`users/${refByUid}/usdEarned`)
+  .transaction(v => (v||0) + CFG.refBonus);
     }
     toast(T('rs'),'s');
     S.page='verify';
