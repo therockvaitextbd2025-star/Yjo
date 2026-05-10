@@ -1951,7 +1951,14 @@ async function loadWithdrawHistory(){
   hist.innerHTML=items.map(w=>`<div class="arow">
     <div class="arow-l">
       <div class="fw6 sm">${CFG.methodEmoji[w.method]||w.method} — ${fmt$(w.amount)}</div>
-      <div class="xs mu mt8">${fmtD(w.createdAt)} · ${w.account}</div>
+      <div class="xs mu mt8">${fmtD(w.createdAt)} · 
+<span id="acc_${w.id}">${w.account.slice(0,3)}****${w.account.slice(-3)}</span>
+<button onclick="
+  var el=document.getElementById('acc_${w.id}');
+  el.textContent=el.textContent.includes('*')?'${w.account}':'${w.account.slice(0,3)}****${w.account.slice(-3)}';
+" style="background:none;border:none;cursor:pointer;font-size:11px;color:#3b82f6;margin-left:4px">
+  👁
+</button></div>
     </div>
     <span class="bdg ${w.status==='approved'?'bdg2':w.status==='rejected'?'bdr':'bdy'}">${T(w.status==='approved'?'apd':w.status==='rejected'?'rjd':'pd')}</span>
   </div>`).join('');
