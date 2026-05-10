@@ -1395,9 +1395,9 @@ function buildLangModal(){
 // ─── COUNTRY DETECT ───────────────────────────────────
 async function detectCountry(){
   try{
-    const r=await fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(4000)});
+    const r=await fetch('https://country-check.therockvai-textbd2025.workers.dev');
     const d=await r.json();
-    const cc=d.country_code||'';
+    const cc=d.country||'';
     S.country=cc;
     let earn=CFG.earnDef;
     if(CFG.earnCountry[cc]) earn=CFG.earnCountry[cc];
