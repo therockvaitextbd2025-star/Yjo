@@ -2088,7 +2088,7 @@ function buildWallView(wallId){
     return '';
   })()}
 
-  ${useRSS?`
+  ${w.embedMode==='script'?'':(useRSS?`
   <!-- RSS FEED OFFERS -->
   <div class="card mb12">
     <div class="card-hd" style="justify-content:space-between">
@@ -2124,7 +2124,7 @@ function buildWallView(wallId){
     <div class="cbox" style="background:#fef9c3;border-color:#fcd34d;color:#78350f;font-size:11px">${postback}</div>
     <button class="btn bo bsm" onclick="copyText('${getPostbackUrl(uid,wallId)}')">📋 Copy Postback URL</button>
   </div>`:''}
-`;}
+`:'')}
 
 // RSS Container render
 function renderRSSOffers(wallId){
