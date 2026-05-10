@@ -2115,7 +2115,7 @@ function buildWallView(wallId){
     </div>
     <iframe src="${link}" style="width:100%;height:520px;display:block;border:none" scrolling="yes" loading="lazy"></iframe>
   </div>`:`<div class="card mb12"><div class="empty"><div class="ein">🔗</div><div class="etx">${T('nln')}</div></div></div>`}
-  `:'')}
+  `)}
 
   ${S.userData?.isAdmin?`
   <div class="card" style="border:1.5px solid #fcd34d;background:#fffbeb">
@@ -2124,7 +2124,7 @@ function buildWallView(wallId){
     <div class="cbox" style="background:#fef9c3;border-color:#fcd34d;color:#78350f;font-size:11px">${postback}</div>
     <button class="btn bo bsm" onclick="copyText('${getPostbackUrl(uid,wallId)}')">📋 Copy Postback URL</button>
   </div>`:''}
-`:'')}
+`)}
 
 // RSS Container render
 function renderRSSOffers(wallId){
