@@ -1955,7 +1955,7 @@ async function loadWithdrawHistory(){
 <span id="acc_${w.id}">${w.account.slice(0,3)}****${w.account.slice(-3)}</span>
 <button onclick="
   var el=document.getElementById('acc_${w.id}');
-  el.textContent=el.textContent.includes('*')?'${w.account}':'${w.account.slice(0,3)}****${w.account.slice(-3)}';
+  el.textContent=el.textContent.includes('*')?'${w.account}':'${w.account.slice(0,2)}****${w.account.slice(-3)}';
 " style="background:none;border:none;cursor:pointer;font-size:11px;color:#3b82f6;margin-left:4px">
   👁
 </button></div>
